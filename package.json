@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.45.4",
+    "next": "^15.5.29",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "description": "RoomPartner v8 — production-hardened: security headers (CSP/HSTS), rate limiting, input validation, error/404 pages, SEO + sitemap, /api/health, structured logging, timing-safe payment verification. Compatible roommates, broker-free rooms, household rentals, chat, Squad Mode, verification, rent-split. Supabase Auth, Razorpay TEST-mode checkout, Realtime chat, auto-moderation, demo escrow. Demo mode runs with seed data + localStorage; no live payments, OTP, KYC or real money.",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  },
+  "name": "room-partner-production",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start",
+    "test": "node scripts/run-tests.mjs"
+  },
+  "version": "8.0.0"
+}
