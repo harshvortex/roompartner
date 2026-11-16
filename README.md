@@ -148,3 +148,7 @@ tests/          unit.test.cjs (10 tests) + scripts/run-tests.mjs (`npm test`)
 vercel.json     Vercel deploy config (framework: nextjs)
 supabase/       schema.sql (MVP + v5 tables)
 ```
+
+## Live
+
+Production: https://roompartner-one.vercel.app — deployed from `main` on GitHub (harshvortex/roompartner).
