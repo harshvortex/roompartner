@@ -1,6 +1,8 @@
 "use client";
 import type { BundleItem } from "@/lib/types";
 import { bundleSummary, inr } from "@/lib/bundle";
+import { Button } from "@/components/ui/button";
+import { Package, X } from "lucide-react";
 
 export function BundleDrawer({ items, onRemove, onClear }: { items: BundleItem[]; onRemove: (id: string) => void; onClear: () => void }) {
   if (items.length === 0) return null;
@@ -9,14 +11,14 @@ export function BundleDrawer({ items, onRemove, onClear }: { items: BundleItem[]
     <div className="fixed bottom-20 left-1/2 z-40 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 animate-slide-up rounded-3xl border border-zinc-200/80 bg-white p-4 shadow-pop sm:bottom-6 lg:bottom-6">
       <div className="flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-2 font-extrabold tracking-tight text-ink-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-base" aria-hidden="true">🧳</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-base" aria-hidden="true"><Package className="h-4 w-4 text-brand-600" /></span>
           Move-in Bundle · {s.itemCount} item{s.itemCount > 1 ? "s" : ""}
         </h3>
-        <button onClick={onClear} className="text-xs font-medium text-ink-400 underline hover:text-ink-700">Clear</button>
+        <Button variant="link" size="sm" onClick={onClear} className="text-xs font-medium text-ink-400 hover:text-ink-700">Clear</Button>
       </div>
       <ul className="mt-2 space-y-1 text-sm">
         {items.map((i) => (
-          <li key={i.id} className="flex justify-between gap-2"><span className="truncate text-ink-700">{i.title}</span><span className="shrink-0 font-semibold">{inr(i.monthly)}/mo <button onClick={() => onRemove(i.id)} aria-label={`Remove ${i.title} from bundle`} className="ml-1 rounded-full bg-red-50 px-1.5 py-0.5 text-red-600 hover:bg-red-100">✕</button></span></li>
+          <li key={i.id} className="flex justify-between gap-2"><span className="truncate text-ink-700">{i.title}</span><span className="shrink-0 font-semibold">{inr(i.monthly)}/mo <button onClick={() => onRemove(i.id)} aria-label={`Remove ${i.title} from bundle`} className="ml-1 inline-flex items-center rounded-full bg-red-50 px-1.5 py-0.5 text-red-600 hover:bg-red-100"><X className="h-3 w-3" /></button></span></li>
         ))}
       </ul>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">

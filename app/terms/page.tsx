@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
 export const metadata = { title: "Terms of Use — RoomPartner" };
 
@@ -7,7 +8,7 @@ export default function TermsPage() {
     <div className="mx-auto max-w-3xl space-y-4">
       <h1 className="page-title">Terms of Use</h1>
       <p className="text-sm text-ink-500">Last updated: 17 November 2026 · RoomPartner (demo build v9)</p>
-      <section className="card space-y-2 text-sm">
+      <Card className="space-y-2 p-5 text-sm">
         <h2 className="font-bold">1. What RoomPartner is</h2>
         <p>RoomPartner helps you find a compatible room partner and a broker-free room, and rent household items from other users. We are a listing and matching platform — we are not a broker, not a landlord, and not a party to any tenancy, rental or sale between users.</p>
         <h2 className="font-bold">2. No brokerage, ever</h2>
@@ -24,7 +25,7 @@ export default function TermsPage() {
         <p>RoomPartner is provided &quot;as is&quot; in demo mode. We are not liable for the behaviour of other users, the condition of a room or item, or any loss from a tenancy or rental you arrange through the platform. Always do your own checks before moving in or paying.</p>
         <h2 className="font-bold">8. Changes</h2>
         <p>These terms may change; the date above will change and the new version will be posted here before it takes effect. Continued use after a change means you accept the new terms.</p>
-      </section>
+      </Card>
       <p className="text-sm"><Link href="/privacy" className="underline">Privacy Policy</Link> · <Link href="/" className="underline">Back to Home</Link></p>
     </div>
   );

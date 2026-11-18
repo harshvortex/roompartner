@@ -15,6 +15,15 @@ import {
   safeRedirectPath,
   verifyDemoOtp,
 } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Smartphone, Globe, CheckCircle2, AlertTriangle, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /** Sign in — Supabase Auth (Google + Email + phone OTP) with a demo fallback.
  * LIVE: email magic link + email/password go through Supabase Auth (the
@@ -231,118 +240,145 @@ export default function LoginPage() {
       </header>
 
       {user ? (
-        <section className="card">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-600 text-lg font-extrabold text-white">
-              {user.charAt(0).toUpperCase()}
-            </span>
-            <div>
-              <p className="font-bold">Signed in as {user}</p>
-              <p className="text-sm text-ink-500">{live ? "Supabase Auth session — your account is real." : "Demo user (localStorage only)."}</p>
+        <Card>
+          <CardContent className="pt-5">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-11 w-11 rounded-2xl">
+                <AvatarFallback className="rounded-2xl bg-primary text-lg font-extrabold text-primary-foreground">
+                  {user.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-bold">Signed in as {user}</p>
+                <p className="text-sm text-ink-500">{live ? "Supabase Auth session — your account is real." : "Demo user (localStorage only)."}</p>
+              </div>
             </div>
-          </div>
-          <div className="mt-4 flex gap-2">
-            <Link href="/dashboard" className="btn-primary flex-1">Go to dashboard</Link>
-            <button onClick={signOut} className="btn-secondary">Sign out</button>
-          </div>
-        </section>
+            <div className="mt-4 flex gap-2">
+              <Button asChild className="flex-1"><Link href="/dashboard">Go to dashboard</Link></Button>
+              <Button variant="outline" onClick={signOut}>Sign out</Button>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <>
-          <section className="card">
-            <h2 className="section-title">Continue with Google</h2>
-            <p className="section-sub">One click — Google handles the sign-in.</p>
-            {!live && (
-              <label className="field-label mt-3">
-                Demo email
-                <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com (demo only)" type="email" autoComplete="email" />
-              </label>
-            )}
-            <button onClick={signInGoogle} className="btn-block mt-3">Continue with Google</button>
-            <p className="form-note">{live ? "Redirects to Google, then back here. Google sign-in needs the Google provider enabled in Supabase — if it fails, use email instead." : "Demo: no Google account is used."}</p>
-          </section>
-
-          <section className="card">
-            <h2 className="section-title">Sign in with email</h2>
-            <p className="section-sub">Works right now — no extra setup needed.</p>
-            <div className="mt-3 flex gap-2">
-              <button onClick={() => setEmailTab("magic")} className={emailTab === "magic" ? "chip-active" : "chip"}>Magic link</button>
-              <button onClick={() => setEmailTab("password")} className={emailTab === "password" ? "chip-active" : "chip"}>Email + password</button>
-            </div>
-            <label className="field-label mt-3">
-              Email
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" type="email" autoComplete="email" />
-            </label>
-            {emailTab === "magic" ? (
-              <>
-                <button onClick={sendMagicLink} disabled={busy} className="btn-block mt-3">{busy ? "Sending…" : "Email me a sign-in link"}</button>
-                {emailSent && (
-                  <div className="callout-ok mt-3">
-                    <p className="font-semibold">Check your inbox</p>
-                    <p>We sent a sign-in link to {email.trim().toLowerCase()}. Click it to sign in — it expires soon, so check spam too if you don&apos;t see it.</p>
-                  </div>
-                )}
-                <p className="form-note">No password to remember. The link signs you in on this device.</p>
-              </>
-            ) : (
-              <>
-                <label className="field-label mt-3">
-                  Password
-                  <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" type="password" autoComplete={passwordMode === "signup" ? "new-password" : "current-password"} />
-                </label>
-                <div className="mt-3 flex gap-2">
-                  <button onClick={() => setPasswordMode("signin")} className={passwordMode === "signin" ? "chip-active" : "chip"}>Sign in</button>
-                  <button onClick={() => setPasswordMode("signup")} className={passwordMode === "signup" ? "chip-active" : "chip"}>Create account</button>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-brand-600" /> Continue with Google</CardTitle>
+              <CardDescription>One click — Google handles the sign-in.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!live && (
+                <div className="mb-3 space-y-1.5">
+                  <Label htmlFor="google-demo-email">Demo email</Label>
+                  <Input id="google-demo-email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com (demo only)" type="email" autoComplete="email" />
                 </div>
-                <button onClick={submitPassword} disabled={busy} className="btn-block mt-3">
-                  {busy ? "Please wait…" : passwordMode === "signup" ? "Create account" : "Sign in"}
-                </button>
-                {emailSent && passwordMode === "signup" && (
-                  <div className="callout-ok mt-3">
-                    <p className="font-semibold">Check your inbox to confirm your email</p>
-                    <p>We sent a confirmation link to {email.trim().toLowerCase()}. Click it, then come back and sign in.</p>
-                  </div>
-                )}
-                <p className="form-note">{live ? "Your password is stored by Supabase Auth, never in RoomPartner's own database." : "Demo: the account is simulated locally."}</p>
-              </>
-            )}
-          </section>
+              )}
+              <Button onClick={signInGoogle} className="w-full"><Globe className="h-4 w-4" /> Continue with Google</Button>
+              <p className="mt-2 text-xs text-ink-500">{live ? "Redirects to Google, then back here. Google sign-in needs the Google provider enabled in Supabase — if it fails, use email instead." : "Demo: no Google account is used."}</p>
+            </CardContent>
+          </Card>
 
-          <section className="card">
-            <h2 className="section-title">Phone OTP</h2>
-            <p className="section-sub">Get a 6-digit code by SMS.</p>
-            <label className="field-label mt-3">
-              Mobile number
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" type="tel" autoComplete="tel" />
-            </label>
-            {!otpSent ? (
-              <button onClick={sendOtp} className="btn-block mt-3">Send OTP</button>
-            ) : (
-              <>
-                <label className="field-label mt-3">
-                  OTP
-                  <input value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="6-digit OTP" inputMode="numeric" autoComplete="one-time-code" />
-                </label>
-                {!live && (
-                  <p className="callout-amber mt-3">Demo OTP: <b>{DEMO_OTP}</b> — shown here because no SMS is sent in demo mode.</p>
-                )}
-                <button onClick={verifyOtp} className="btn-block mt-3">Verify OTP</button>
-              </>
-            )}
-            <p className="form-note">{live ? "Live SMS needs a phone provider (MSG91/DLT) configured in Supabase — until then, phone OTP will fail and email works instead." : "Demo: no SMS is sent."}</p>
-          </section>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5 text-brand-600" /> Sign in with email</CardTitle>
+              <CardDescription>Works right now — no extra setup needed.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={emailTab} onValueChange={(v) => setEmailTab(v as "magic" | "password")} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="magic">Magic link</TabsTrigger>
+                  <TabsTrigger value="password">Email + password</TabsTrigger>
+                </TabsList>
+                <div className="mt-3 space-y-1.5">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input id="login-email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" type="email" autoComplete="email" />
+                </div>
+                <TabsContent value="magic">
+                  <Button onClick={sendMagicLink} disabled={busy} className="w-full">{busy ? "Sending…" : "Email me a sign-in link"}</Button>
+                  {emailSent && (
+                    <div className="callout-ok mt-3">
+                      <p className="font-semibold">Check your inbox</p>
+                      <p>We sent a sign-in link to {email.trim().toLowerCase()}. Click it to sign in — it expires soon, so check spam too if you don&apos;t see it.</p>
+                    </div>
+                  )}
+                  <p className="mt-2 text-xs text-ink-500">No password to remember. The link signs you in on this device.</p>
+                </TabsContent>
+                <TabsContent value="password">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="login-password">Password</Label>
+                    <Input id="login-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" type="password" autoComplete={passwordMode === "signup" ? "new-password" : "current-password"} />
+                  </div>
+                  <Tabs value={passwordMode} onValueChange={(v) => setPasswordMode(v as "signin" | "signup")} className="mt-3 w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="signin">Sign in</TabsTrigger>
+                      <TabsTrigger value="signup">Create account</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                  <Button onClick={submitPassword} disabled={busy} className="mt-3 w-full">
+                    {busy ? "Please wait…" : passwordMode === "signup" ? "Create account" : "Sign in"}
+                  </Button>
+                  {emailSent && passwordMode === "signup" && (
+                    <div className="callout-ok mt-3">
+                      <p className="font-semibold">Check your inbox to confirm your email</p>
+                      <p>We sent a confirmation link to {email.trim().toLowerCase()}. Click it, then come back and sign in.</p>
+                    </div>
+                  )}
+                  <p className="mt-2 text-xs text-ink-500">{live ? "Your password is stored by Supabase Auth, never in RoomPartner's own database." : "Demo: the account is simulated locally."}</p>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Smartphone className="h-5 w-5 text-brand-600" /> Phone OTP</CardTitle>
+              <CardDescription>Get a 6-digit code by SMS.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-1.5">
+                <Label htmlFor="login-phone">Mobile number</Label>
+                <Input id="login-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" type="tel" autoComplete="tel" />
+              </div>
+              {!otpSent ? (
+                <Button onClick={sendOtp} className="mt-3 w-full">Send OTP</Button>
+              ) : (
+                <>
+                  <div className="mt-3 space-y-1.5">
+                    <Label htmlFor="login-otp">OTP</Label>
+                    <Input id="login-otp" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="6-digit OTP" inputMode="numeric" autoComplete="one-time-code" />
+                  </div>
+                  {!live && (
+                    <p className="callout-amber mt-3">Demo OTP: <b>{DEMO_OTP}</b> — shown here because no SMS is sent in demo mode.</p>
+                  )}
+                  <Button onClick={verifyOtp} className="mt-3 w-full">Verify OTP</Button>
+                </>
+              )}
+              <p className="mt-2 text-xs text-ink-500">{live ? "Live SMS needs a phone provider (MSG91/DLT) configured in Supabase — until then, phone OTP will fail and email works instead." : "Demo: no SMS is sent."}</p>
+            </CardContent>
+          </Card>
         </>
       )}
 
       {msg && (
-        <p className={msgKind === "error" ? "callout-amber" : msgKind === "ok" ? "callout-ok" : "toast"} role="status">
-          {msg}
-        </p>
+        <div
+          role="status"
+          className={cn(
+            "flex items-start gap-2 rounded-xl border p-3 text-sm",
+            msgKind === "error" && "border-amber-200 bg-amber-50 text-amber-900",
+            msgKind === "ok" && "border-emerald-200 bg-emerald-50 text-emerald-900",
+            msgKind === "info" && "border-brand-100 bg-brand-50 text-ink-700",
+          )}
+        >
+          {msgKind === "error" ? <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> : msgKind === "ok" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <Info className="mt-0.5 h-4 w-4 shrink-0" />}
+          <span>{msg}</span>
+        </div>
       )}
       <p className="text-xs text-ink-500">
         By signing in you agree to the <Link href="/terms" className="underline">Terms</Link> and{" "}
         <Link href="/privacy" className="underline">Privacy Policy</Link>. Real Aadhaar/ID verification is not part of sign-in — the
         trust score stays simulated.
       </p>
+      {!live && <Badge variant="secondary">Demo mode — sign-in is simulated locally</Badge>}
     </div>
   );
 }

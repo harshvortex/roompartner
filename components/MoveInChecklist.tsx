@@ -1,4 +1,9 @@
 "use client";
+import { Check } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
 export const CHECKLIST_STEPS = [
   { id: "profile", label: "Complete your match profile" },
   { id: "match", label: "Find a roommate with 70%+ match" },
@@ -13,25 +18,29 @@ export const CHECKLIST_STEPS = [
 export function MoveInChecklist({ done, onToggle }: { done: string[]; onToggle: (id: string) => void }) {
   const pct = Math.round((done.length / CHECKLIST_STEPS.length) * 100);
   return (
-    <div className="card">
-      <div className="flex items-center justify-between gap-2">
-        <span className="section-title">Move-in Journey</span>
-        <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-extrabold text-brand-700">{pct}% done</span>
-      </div>
-      <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-surface-muted"><div className="h-2.5 rounded-full bg-gradient-to-r from-brand-500 to-violet-500 transition-all duration-500" style={{ width: `${pct}%` }} /></div>
-      <ul className="mt-4 space-y-1">
-        {CHECKLIST_STEPS.map((s) => {
-          const isDone = done.includes(s.id);
-          return (
-            <li key={s.id}>
-              <button onClick={() => onToggle(s.id)} aria-pressed={isDone} className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm transition hover:bg-surface">
-                <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition ${isDone ? "border-brand-600 bg-brand-600 text-white" : "border-zinc-300 text-transparent"}`}>✓</span>
-                <span className={isDone ? "text-ink-400 line-through" : "font-medium text-ink-800"}>{s.label}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle>Move-in Journey</CardTitle>
+        <Badge variant="secondary" className="bg-brand-50 text-brand-700">{pct}% done</Badge>
+      </CardHeader>
+      <CardContent>
+        <div className="h-2.5 overflow-hidden rounded-full bg-surface-muted"><div className="h-2.5 rounded-full bg-gradient-to-r from-brand-500 to-violet-500 transition-all duration-500" style={{ width: `${pct}%` }} /></div>
+        <ul className="mt-4 space-y-1">
+          {CHECKLIST_STEPS.map((s) => {
+            const isDone = done.includes(s.id);
+            return (
+              <li key={s.id}>
+                <button onClick={() => onToggle(s.id)} aria-pressed={isDone} className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-sm transition hover:bg-surface">
+                  <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition", isDone ? "border-primary bg-primary text-primary-foreground" : "border-zinc-300 text-transparent")}>
+                    <Check className="h-3.5 w-3.5" />
+                  </span>
+                  <span className={isDone ? "text-ink-400 line-through" : "font-medium text-ink-800"}>{s.label}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

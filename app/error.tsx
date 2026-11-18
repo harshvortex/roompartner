@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 /** Global error boundary — a failed page render shows this instead of a
  * blank screen or a stack trace. The error detail is logged server-side;
@@ -12,12 +13,10 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
       </p>
       {error?.digest ? <p className="mt-2 text-xs text-ink-400">Reference: {error.digest}</p> : null}
       <div className="mt-4 flex justify-center gap-2">
-        <button onClick={reset} className="btn-primary">
-          Try again
-        </button>
-        <a href="/" className="btn-secondary">
-          Go home
-        </a>
+        <Button onClick={reset}>Try again</Button>
+        <Button asChild variant="outline">
+          <a href="/">Go home</a>
+        </Button>
       </div>
     </div>
   );

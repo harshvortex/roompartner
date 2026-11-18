@@ -1,4 +1,10 @@
 "use client";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+
 export interface FilterState {
   city: string;
   maxBudget: number;
@@ -26,32 +32,51 @@ export function Filters({ value, onChange, cities, showFurnishing = false, showC
   showFurnishing?: boolean; showCategory?: boolean; showBhkGender?: boolean;
 }) {
   return (
-    <div className="card space-y-4">
+    <Card className="space-y-4 p-5">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <label className="field-label">City
-          <select value={value.city} onChange={(e) => onChange({ ...value, city: e.target.value })}>
-            <option value="">All cities</option>
-            {cities.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </label>
+        <div className="space-y-1.5">
+          <Label htmlFor="filter-city">City</Label>
+          <Select value={value.city || "all"} onValueChange={(v) => onChange({ ...value, city: v === "all" ? "" : v })}>
+            <SelectTrigger id="filter-city"><SelectValue placeholder="All cities" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All cities</SelectItem>
+              {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
         {showFurnishing && (
-          <label className="field-label">Furnishing
-            <select value={value.furnishing} onChange={(e) => onChange({ ...value, furnishing: e.target.value })}>
-              <option value="">Any</option><option value="furnished">Furnished</option><option value="semi-furnished">Semi-furnished</option><option value="unfurnished">Unfurnished</option>
-            </select>
-          </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="filter-furnishing">Furnishing</Label>
+            <Select value={value.furnishing || "any"} onValueChange={(v) => onChange({ ...value, furnishing: v === "any" ? "" : v })}>
+              <SelectTrigger id="filter-furnishing"><SelectValue placeholder="Any" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="furnished">Furnished</SelectItem>
+                <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                <SelectItem value="unfurnished">Unfurnished</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         )}
         {showCategory && (
-          <label className="field-label">Category
-            <select value={value.category} onChange={(e) => onChange({ ...value, category: e.target.value })}>
-              <option value="">All</option><option value="furniture">Furniture</option><option value="appliance">Appliance</option><option value="electronics">Electronics</option><option value="daily">Daily needs</option>
-            </select>
-          </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="filter-category">Category</Label>
+            <Select value={value.category || "all"} onValueChange={(v) => onChange({ ...value, category: v === "all" ? "" : v })}>
+              <SelectTrigger id="filter-category"><SelectValue placeholder="All" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="furniture">Furniture</SelectItem>
+                <SelectItem value="appliance">Appliance</SelectItem>
+                <SelectItem value="electronics">Electronics</SelectItem>
+                <SelectItem value="daily">Daily needs</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         )}
         <div className="col-span-2 sm:col-span-1">
-          <span className="field-label">Max budget</span>
+          <Label htmlFor="filter-budget">Max budget</Label>
           <div className="mt-1.5 flex items-center gap-2">
-            <input type="range" min={5000} max={50000} step={1000} value={value.maxBudget} onChange={(e) => onChange({ ...value, maxBudget: Number(e.target.value) })} aria-label="Maximum monthly budget" />
+            <input id="filter-budget" type="range" min={5000} max={50000} step={1000} value={value.maxBudget} onChange={(e) => onChange({ ...value, maxBudget: Number(e.target.value) })} aria-label="Maximum monthly budget" />
             <span className="shrink-0 rounded-lg bg-brand-50 px-2 py-1 text-xs font-bold text-brand-700">₹{value.maxBudget.toLocaleString("en-IN")}</span>
           </div>
         </div>
@@ -59,18 +84,42 @@ export function Filters({ value, onChange, cities, showFurnishing = false, showC
       <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 pt-4">
         <span className="text-xs font-bold uppercase tracking-wide text-ink-400">Sort</span>
         {SORTS.map((s) => (
-          <button key={s.id} onClick={() => onChange({ ...value, sort: s.id })} aria-pressed={value.sort === s.id} className={value.sort === s.id ? "chip-active" : "chip"}>{s.label}</button>
+          <Button
+            key={s.id}
+            variant={value.sort === s.id ? "default" : "outline"}
+            size="sm"
+            onClick={() => onChange({ ...value, sort: s.id })}
+            aria-pressed={value.sort === s.id}
+            className="rounded-full"
+          >
+            {s.label}
+          </Button>
         ))}
-        <button onClick={() => onChange({ ...value, verifiedOnly: !value.verifiedOnly })} aria-pressed={value.verifiedOnly} className={value.verifiedOnly ? "chip-active" : "chip"}>✓ Verified only</button>
+        <label htmlFor="filter-verified" className="flex cursor-pointer items-center gap-2 rounded-full border border-input bg-background px-3 py-1.5 text-xs font-semibold shadow-sm">
+          <Switch id="filter-verified" checked={value.verifiedOnly} onCheckedChange={(v) => onChange({ ...value, verifiedOnly: v })} />
+          Verified only
+        </label>
         {showBhkGender && (<>
-          <select className="!w-auto rounded-full !py-1.5 !text-xs" value={value.bhk} onChange={(e) => onChange({ ...value, bhk: e.target.value })}>
-            <option value="">Any BHK</option><option value="1BHK">1BHK</option><option value="2BHK">2BHK</option><option value="3BHK">3BHK</option><option value="PG">PG</option>
-          </select>
-          <select className="!w-auto rounded-full !py-1.5 !text-xs" value={value.gender} onChange={(e) => onChange({ ...value, gender: e.target.value })}>
-            <option value="">Any gender pref</option><option value="any">Any</option><option value="female">Female</option><option value="male">Male</option>
-          </select>
+          <Select value={value.bhk || "any"} onValueChange={(v) => onChange({ ...value, bhk: v === "any" ? "" : v })}>
+            <SelectTrigger className="h-9 w-auto rounded-full text-xs font-semibold"><SelectValue placeholder="Any BHK" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">Any BHK</SelectItem>
+              <SelectItem value="1BHK">1BHK</SelectItem>
+              <SelectItem value="2BHK">2BHK</SelectItem>
+              <SelectItem value="3BHK">3BHK</SelectItem>
+              <SelectItem value="PG">PG</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={value.gender || "any"} onValueChange={(v) => onChange({ ...value, gender: v === "any" ? "" : v })}>
+            <SelectTrigger className="h-9 w-auto rounded-full text-xs font-semibold"><SelectValue placeholder="Any gender pref" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">Any gender pref</SelectItem>
+              <SelectItem value="female">Female</SelectItem>
+              <SelectItem value="male">Male</SelectItem>
+            </SelectContent>
+          </Select>
         </>)}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { PRODUCTS, formatRupees, type ProductId } from "@/lib/payments";
+import { Button } from "@/components/ui/button";
 
 declare global {
   interface Window { Razorpay?: new (options: Record<string, unknown>) => { open: () => void }; }
@@ -86,9 +87,9 @@ export function RazorpayCheckout({ product, label }: { product: ProductId; label
 
   return (
     <div>
-      <button onClick={pay} disabled={busy} className="btn-block mt-2">
+      <Button onClick={pay} disabled={busy} className="mt-2 w-full">
         {busy ? "Processing…" : label || `Pay ${formatRupees(p.amountPaise)} (test mode)`}
-      </button>
+      </Button>
       {status && <p className="mt-2 text-xs text-ink-600">{status}</p>}
     </div>
   );

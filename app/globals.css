@@ -4,6 +4,36 @@ html, body { background: #F7F7FB; color-scheme: light; }
 @tailwind components;
 @tailwind utilities;
 
+/* shadcn/ui design tokens — LIGHT ONLY, pinned to the RoomPartner indigo
+   brand (#4F46E5). No dark-mode variables are defined anywhere: the app
+   stays light on every device. */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+    --primary: 243 75% 59%; /* #4F46E5 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 243 100% 97%;
+    --accent-foreground: 243 75% 59%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 243 75% 59%;
+    --radius: 0.75rem;
+  }
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+
 /* LIGHT ONLY — pinned deliberately. The app was built for a light palette only:
    on phones in dark mode the OS flipped the background to near-black while cards
    and text stayed light, so the whole page read as black. No dark-mode overrides,

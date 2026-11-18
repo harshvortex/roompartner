@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
 import { RentalCard } from "@/components/Cards";
 import { Filters, DEFAULT_FILTERS, type FilterState } from "@/components/Filters";
@@ -39,15 +42,15 @@ export default function RentalsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h1 className="page-title">Rent household items</h1><p className="text-sm text-ink-500">{list.length} items · from neighbours, by the month</p></div>
         <div className="flex gap-2">
-          <a href="/list-item" className="btn-primary btn-sm">+ List an item</a>
-          <button onClick={seedDemo} className="btn-secondary btn-sm">Load demo listings</button>
-          {demoLoaded && <button onClick={clearDemo} className="btn-secondary btn-sm">Clear demo</button>}
+          <Button asChild size="sm"><a href="/list-item">+ List an item</a></Button>
+          <Button variant="outline" size="sm" onClick={seedDemo}>Load demo listings</Button>
+          {demoLoaded && <Button variant="outline" size="sm" onClick={clearDemo}>Clear demo</Button>}
         </div>
       </div>
-      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search bed, fridge, washing machine…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
+      <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search bed, fridge, washing machine…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
       <Filters value={filters} onChange={setFilters} cities={DEMO_CITIES} showCategory showBhkGender={false} />
       {list.length === 0 ? (
-        <div className="empty-state"><p className="font-semibold">No items match those filters yet.</p><button onClick={seedDemo} className="mt-4 btn-primary">Load demo listings</button></div>
+        <div className="empty-state"><p className="font-semibold">No items match those filters yet.</p><Button className="mt-4" onClick={seedDemo}>Load demo listings</Button></div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {list.map((r) => (
@@ -61,18 +64,18 @@ export default function RentalsPage() {
           <p className="text-lg font-bold">{inr(selected.pricePerMonth)}/mo · deposit {inr(selected.deposit)}</p>
           <p>Owner: {selected.ownerName}</p>
           <label className="field-label">Rental dates
-            <span className="mt-1 flex gap-2"><input type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} className="rounded-lg border p-2 text-sm" /><input type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} className="rounded-lg border p-2 text-sm" /></span>
+            <span className="mt-1 flex gap-2"><Input type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} className="rounded-lg border p-2 text-sm" /><Input type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} className="rounded-lg border p-2 text-sm" /></span>
           </label>
-          <button onClick={() => { addToBundle(selected); setSelected(null); }} className="w-full rounded-lg border px-4 py-2 font-medium">+ Add to move-in bundle</button>
-          <button onClick={() => { setSelected(null); setInterestFor(selected); }} className="btn-block">Book this item</button>
+          <Button variant="outline" onClick={() => { addToBundle(selected); setSelected(null); }} className="w-full">+ Add to move-in bundle</Button>
+          <Button className="w-full" onClick={() => { setSelected(null); setInterestFor(selected); }}>Book this item</Button>
         </DetailModal>
       )}
       {interestFor && (
         <DetailModal title={`Book ${interestFor.title}`} onClose={() => setInterestFor(null)}>
           <p className="text-ink-600">{inr(interestFor.pricePerMonth)}/mo · deposit {inr(interestFor.deposit)} · {dates.start} → {dates.end}</p>
-          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <button key={m} onClick={() => setMsg(m)} className={`rounded-full border px-3 py-1.5 text-xs ${msg === m ? "bg-brand-600 text-white border-brand-600" : "bg-white"}`}>{m}</button>)}</div>
-          <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
-          <button onClick={() => { setInterests([...interests, { id: `i-${Date.now()}`, targetType: "rental", targetId: interestFor.id, message: msg, createdAt: new Date().toISOString() }]); openConversation(convs, setConvs, chatMsgs, setChatMsgs, "rental", interestFor.id, `${interestFor.title} — ${interestFor.ownerName}`, interestFor.ownerName, msg); setChecklist((c) => Array.from(new Set([...c, "interest", "chat"]))); setInterestFor(null); }} className="btn-block">Send booking request — opens a chat</button>
+          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <Button key={m} variant={msg === m ? "default" : "outline"} size="sm" onClick={() => setMsg(m)} className="rounded-full">{m}</Button>)}</div>
+          <Textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
+          <Button className="w-full" onClick={() => { setInterests([...interests, { id: `i-${Date.now()}`, targetType: "rental", targetId: interestFor.id, message: msg, createdAt: new Date().toISOString() }]); openConversation(convs, setConvs, chatMsgs, setChatMsgs, "rental", interestFor.id, `${interestFor.title} — ${interestFor.ownerName}`, interestFor.ownerName, msg); setChecklist((c) => Array.from(new Set([...c, "interest", "chat"]))); setInterestFor(null); }}>Send booking request — opens a chat</Button>
           <p className="text-xs text-ink-500">Pay on pickup / UPI on confirmation in the MVP — live Razorpay comes after KYC.</p>
         </DetailModal>
       )}

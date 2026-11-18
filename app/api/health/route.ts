@@ -14,7 +14,7 @@ export async function GET() {
   const razorpayConfigured = Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
   return NextResponse.json(
     buildHealthStatus({
-      version: "10.0.0",
+      version: "11.0.0",
       mode: supabaseConfigured ? "live" : "demo",
       uptimeSeconds: (Date.now() - STARTED_AT) / 1000,
       supabaseConfigured,

@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
 import { RoommateCard } from "@/components/Cards";
 import { Filters, DEFAULT_FILTERS, type FilterState } from "@/components/Filters";
@@ -43,15 +46,15 @@ export default function FlatmatesPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h1 className="page-title">Compatible flatmates</h1><p className="text-sm text-ink-500">{scored.length} people · ranked by your profile</p></div>
         <div className="flex gap-2">
-          <button onClick={seedDemo} className="btn-secondary btn-sm">Load demo listings</button>
-          {demoLoaded && <button onClick={clearDemo} className="btn-secondary btn-sm">Clear demo</button>}
+          <Button variant="outline" size="sm" onClick={seedDemo}>Load demo listings</Button>
+          {demoLoaded && <Button variant="outline" size="sm" onClick={clearDemo}>Clear demo</Button>}
         </div>
       </div>
       {!profile.name && <p className="callout-amber">Complete your match profile to get real scores — <a href="/onboarding" className="font-medium underline">complete profile →</a></p>}
-      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or city…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
+      <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or city…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
       <Filters value={filters} onChange={setFilters} cities={DEMO_CITIES} showBhkGender={false} />
       {scored.length === 0 ? (
-        <div className="empty-state"><p className="font-semibold">No flatmates match those filters yet.</p><p className="mt-1 text-sm text-ink-500">Try widening the budget or clearing the city filter — or load the demo listings.</p><button onClick={seedDemo} className="mt-4 btn-primary">Load demo listings</button></div>
+        <div className="empty-state"><p className="font-semibold">No flatmates match those filters yet.</p><p className="mt-1 text-sm text-ink-500">Try widening the budget or clearing the city filter — or load the demo listings.</p><Button className="mt-4" onClick={seedDemo}>Load demo listings</Button></div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {scored.map(({ p, result }) => (
@@ -68,15 +71,15 @@ export default function FlatmatesPage() {
             <p>{selected.bio}</p>
             <p className="text-ink-600">Food: {selected.food} · Smoking: {selected.smoking} · Sleep {selected.sleepTime}–{selected.wakeTime} · Cleanliness {selected.cleanliness}/5 · WFH: {selected.wfh} · Pets: {selected.pets} · Guests: {selected.guestsOk} · {selected.languages.join(", ")}</p>
             <p>{selected.phoneVerified ? "✓ Phone verified" : "Phone not verified yet"}</p>
-            <button onClick={() => { setSelected(null); setInterestFor(selected); }} className="btn-block">Express interest</button>
+            <Button className="w-full" onClick={() => { setSelected(null); setInterestFor(selected); }}>Express interest</Button>
           </>); })()}
         </DetailModal>
       )}
       {interestFor && (
         <DetailModal title={`Message ${interestFor.name}`} onClose={() => setInterestFor(null)}>
-          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <button key={m} onClick={() => setMsg(m)} className={`rounded-full border px-3 py-1.5 text-xs ${msg === m ? "bg-brand-600 text-white border-brand-600" : "bg-white"}`}>{m}</button>)}</div>
-          <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
-          <button onClick={sendInterest} className="btn-block">Send interest — opens a chat</button>
+          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <Button key={m} variant={msg === m ? "default" : "outline"} size="sm" onClick={() => setMsg(m)} className="rounded-full">{m}</Button>)}</div>
+          <Textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
+          <Button className="w-full" onClick={sendInterest}>Send interest — opens a chat</Button>
           <p className="text-xs text-ink-500">Your phone number stays hidden until you both agree to chat. Find the thread in <a href="/chats" className="underline">Chats</a>.</p>
         </DetailModal>
       )}

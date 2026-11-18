@@ -1,6 +1,17 @@
-# RoomPartner v10 — real email auth + security hardening
+# RoomPartner v11 — shadcn/ui design system
 
 Find a compatible room partner and a broker-free room, plus rent daily-needed household items. ₹0 brokerage.
+
+## What changed in v11 (2026-11-18) — shadcn/ui, the popular UI library
+
+The app now uses **shadcn/ui** (the most popular UI library for Next.js + Tailwind) instead of hand-rolled button/card/input classes, because the old look still felt computer-generated. Same indigo brand (#4F46E5), same light-only palette, same routes, flows, copy, demo data, compatibility weights and pricing — this is a UI migration only; no auth or security logic changed.
+
+- **Installed (npm, all from the registry — nothing vendored):** `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, `tailwindcss-animate`, `sonner`, and Radix primitives `@radix-ui/react-slot`, `react-label`, `react-avatar`, `react-dialog`, `react-tabs`, `react-select`, `react-switch`. Plus the standard shadcn/ui setup: `lib/utils.ts` (`cn()` helper), CSS-variable theme tokens in `app/globals.css` pinned to the indigo brand, and `tailwind.config.ts` extended with the shadcn colour/radius tokens.
+- **New components in `components/ui/`:** Button, Input, Textarea, Label, Card (+ Header/Content/Footer/Title/Description), Badge, Avatar, Dialog, Tabs, Select, Switch, Skeleton, Sonner (Toaster, mounted in the root layout). One intentional deviation from stock shadcn/ui: **Badge renders a `<span>` instead of a `<div>`** — the app nests badges inside `<p>`/`<h3>`/`<span>` elements, and a `<div>` there caused a React hydration error (#418); a span renders identically and is valid everywhere.
+- **Screens migrated:** Header + mobile bottom nav (shadcn Button + lucide icons), home hero/search/featured cards, flatmates/rooms/rentals cards and filters (Radix Select + Switch for "Verified only", Button pill toggles), login page (Radix Tabs for Magic link / Email + password and Sign in / Create account, Card + Input + Label + Avatar), dashboard (Card sections, Badge statuses, Select for report reason), My Space, chats (Avatar + Card + Badge), list-room/list-item/onboarding forms (Card + Label + Input + Select), squads, DetailModal → Radix Dialog, BundleDrawer, MoveInChecklist, RazorpayCheckout, error/404 pages, privacy/terms. The two budget **range sliders stay native `<input type="range">`** (shadcn's Slider was not in the requested set) and keep their styled look.
+- **Light only, still pinned:** zero `dark:` variants, zero `prefers-color-scheme`, no dark-mode CSS variables defined — the shadcn token layer is light-only. The old amber `accent` colour scale was removed from `tailwind.config.ts` because it collided with shadcn's `accent` token (it was unused — only `accent-brand-600` appears, which is the brand scale).
+- **Fixes found during migration:** `lucide-react` in this install has no `Chrome` icon (brand icons removed) — the Google sign-in button now uses `Globe`. The onboarding rewrite initially dropped the `useProfile` import — restored; the build caught both.
+- **Tests** — `npm test` still 24/24 (no new tests: the migration changes presentation, not the tested lib logic). **Version** — `package.json` and `/api/health` report 11.0.0.
 
 ## What changed in v10 (2026-11-18) — real email auth + security hardening
 

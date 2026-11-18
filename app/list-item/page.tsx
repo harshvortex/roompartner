@@ -4,6 +4,11 @@ import { useRouter } from "next/navigation";
 import { DEMO_CITIES } from "@/lib/seed";
 import { validateRentalItem } from "@/lib/validate";
 import type { RentalItem } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function ListItemPage() {
   const router = useRouter();
@@ -19,7 +24,7 @@ export default function ListItemPage() {
     localStorage.setItem("rp-my-rentals", JSON.stringify([item, ...existing]));
     setDone(true);
   };
-  if (done) return <div className="mx-auto max-w-xl empty-state shadow-sm"><h1 className="text-xl font-extrabold tracking-tight">Rental item listed ✓</h1><p className="mt-2 text-sm text-ink-600">Your item is live in demo mode. Start with small, low-risk items first — iron, induction, vacuum, cycle, chair — before appliances.</p><button onClick={() => router.push("/rentals")} className="mt-4 btn-primary">View rentals →</button></div>;
+  if (done) return <div className="mx-auto max-w-xl empty-state shadow-sm"><h1 className="text-xl font-extrabold tracking-tight">Rental item listed ✓</h1><p className="mt-2 text-sm text-ink-600">Your item is live in demo mode. Start with small, low-risk items first — iron, induction, vacuum, cycle, chair — before appliances.</p><Button onClick={() => router.push("/rentals")} className="mt-4">View rentals →</Button></div>;
   return (
     <div className="mx-auto max-w-xl space-y-4">
       <header>
@@ -27,15 +32,47 @@ export default function ListItemPage() {
         <h1 className="page-title">List a rental item</h1>
         <p className="page-sub">Rent out something you already own — neighbours pay monthly, you keep the item.</p>
       </header>
-      <div className="space-y-3 card">
-        <label className="field-label">Item<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Queen bed with storage" /></label>
+      <Card className="space-y-3 p-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="item-title">Item</Label>
+          <Input id="item-title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Queen bed with storage" />
+        </div>
         <div className="grid grid-cols-2 gap-3">
-          <label className="field-label">Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}><option value="furniture">Furniture</option><option value="appliance">Appliance</option><option value="electronics">Electronics</option><option value="daily">Daily needs</option></select></label>
-          <label className="field-label">City<select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}>{DEMO_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
-          <label className="field-label">Locality<input value={form.locality} onChange={(e) => setForm({ ...form, locality: e.target.value })} placeholder="HSR Layout" /></label>
-          <label className="field-label">Your name<input value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} placeholder="Your name" /></label>
-          <label className="field-label">Rent (₹/mo)<input type="number" min={50} max={50000} value={form.pricePerMonth} onChange={(e) => setForm({ ...form, pricePerMonth: Number(e.target.value) })} /></label>
-          <label className="field-label">Deposit (₹)<input type="number" min={0} max={600000} value={form.deposit} onChange={(e) => setForm({ ...form, deposit: Number(e.target.value) })} /></label>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-category">Category</Label>
+            <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+              <SelectTrigger id="item-category"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="furniture">Furniture</SelectItem>
+                <SelectItem value="appliance">Appliance</SelectItem>
+                <SelectItem value="electronics">Electronics</SelectItem>
+                <SelectItem value="daily">Daily needs</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-city">City</Label>
+            <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
+              <SelectTrigger id="item-city"><SelectValue /></SelectTrigger>
+              <SelectContent>{DEMO_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-locality">Locality</Label>
+            <Input id="item-locality" value={form.locality} onChange={(e) => setForm({ ...form, locality: e.target.value })} placeholder="HSR Layout" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-owner">Your name</Label>
+            <Input id="item-owner" value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} placeholder="Your name" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-rent">Rent (₹/mo)</Label>
+            <Input id="item-rent" type="number" min={50} max={50000} value={form.pricePerMonth} onChange={(e) => setForm({ ...form, pricePerMonth: Number(e.target.value) })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="item-deposit">Deposit (₹)</Label>
+            <Input id="item-deposit" type="number" min={0} max={600000} value={form.deposit} onChange={(e) => setForm({ ...form, deposit: Number(e.target.value) })} />
+          </div>
         </div>
         {errors.length > 0 && (
           <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
@@ -43,8 +80,8 @@ export default function ListItemPage() {
             <ul className="mt-1 list-disc pl-5">{errors.map((e) => <li key={e}>{e}</li>)}</ul>
           </div>
         )}
-        <button onClick={save} className="btn-block">Publish item</button>
-      </div>
+        <Button onClick={save} className="w-full">Publish item</Button>
+      </Card>
     </div>
   );
 }

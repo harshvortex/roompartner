@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -56,16 +59,16 @@ function RoomsInner() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h1 className="page-title">Broker-free rooms</h1><p className="text-sm text-ink-500">{list.length} rooms · ₹0 brokerage on every listing</p></div>
         <div className="flex gap-2">
-          <a href="/list-room" className="btn-primary btn-sm">+ List a room</a>
-          <button onClick={seedDemo} className="btn-secondary btn-sm">Load demo listings</button>
-          {demoLoaded && <button onClick={clearDemo} className="btn-secondary btn-sm">Clear demo</button>}
+          <Button asChild size="sm"><a href="/list-room">+ List a room</a></Button>
+          <Button variant="outline" size="sm" onClick={seedDemo}>Load demo listings</Button>
+          {demoLoaded && <Button variant="outline" size="sm" onClick={clearDemo}>Clear demo</Button>}
         </div>
       </div>
-      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by locality or title…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
+      <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by locality or title…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
       <Filters value={filters} onChange={setFilters} cities={DEMO_CITIES} showFurnishing />
       {suggestion.length === 2 && <p className="rounded-xl bg-brand-50 border border-brand-200 p-3 text-sm">💡 Smart suggestion: most movers add a bed + fridge to their bundle. Find them in <a href="/rentals" className="font-medium underline">Rentals</a>.</p>}
       {list.length === 0 ? (
-        <div className="empty-state"><p className="font-semibold">No rooms match those filters yet.</p><p className="mt-1 text-sm text-ink-500">Try a different city or a higher budget — or load the demo listings.</p><button onClick={seedDemo} className="mt-4 btn-primary">Load demo listings</button></div>
+        <div className="empty-state"><p className="font-semibold">No rooms match those filters yet.</p><p className="mt-1 text-sm text-ink-500">Try a different city or a higher budget — or load the demo listings.</p><Button className="mt-4" onClick={seedDemo}>Load demo listings</Button></div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {list.map((r) => (
@@ -84,21 +87,21 @@ function RoomsInner() {
           <div className="rounded-xl bg-surface p-3">
             <p className="text-sm font-semibold">Book a visit</p>
             <div className="mt-2 flex gap-2">
-              <input type="date" value={visitDate} onChange={(e) => setVisitDate(e.target.value)} className="flex-1 rounded-lg border p-2 text-sm" />
-              <input type="time" value={visitTime} onChange={(e) => setVisitTime(e.target.value)} className="rounded-lg border p-2 text-sm" />
-              <button onClick={() => { bookVisit(selected); setSelected(null); }} className="btn-primary btn-sm">Book visit</button>
+              <Input type="date" value={visitDate} onChange={(e) => setVisitDate(e.target.value)} className="flex-1 rounded-lg border p-2 text-sm" />
+              <Input type="time" value={visitTime} onChange={(e) => setVisitTime(e.target.value)} className="rounded-lg border p-2 text-sm" />
+              <Button size="sm" onClick={() => { bookVisit(selected); setSelected(null); }}>Book visit</Button>
             </div>
             <p className="mt-1 text-xs text-ink-500">Confirm / mark done from the Dashboard → Your visits.</p>
           </div>
-          <button onClick={() => { addToBundle("room", selected.id, selected.title, selected.rent, selected.deposit); setSelected(null); }} className="w-full rounded-lg border px-4 py-2 font-medium">+ Add to move-in bundle</button>
-          <button onClick={() => { setSelected(null); setInterestFor(selected); }} className="btn-block">Express interest</button>
+          <Button variant="outline" onClick={() => { addToBundle("room", selected.id, selected.title, selected.rent, selected.deposit); setSelected(null); }} className="w-full">+ Add to move-in bundle</Button>
+          <Button className="w-full" onClick={() => { setSelected(null); setInterestFor(selected); }}>Express interest</Button>
         </DetailModal>
       )}
       {interestFor && (
         <DetailModal title={`Message the owner`} onClose={() => setInterestFor(null)}>
-          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <button key={m} onClick={() => setMsg(m)} className={`rounded-full border px-3 py-1.5 text-xs ${msg === m ? "bg-brand-600 text-white border-brand-600" : "bg-white"}`}>{m}</button>)}</div>
-          <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
-          <button onClick={sendInterest} className="btn-block">Send interest</button>
+          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <Button key={m} variant={msg === m ? "default" : "outline"} size="sm" onClick={() => setMsg(m)} className="rounded-full">{m}</Button>)}</div>
+          <Textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
+          <Button className="w-full" onClick={sendInterest}>Send interest</Button>
         </DetailModal>
       )}
       <BundleDrawer items={bundle} onRemove={(id) => setBundle(bundle.filter((b) => b.id !== id))} onClear={() => setBundle([])} />

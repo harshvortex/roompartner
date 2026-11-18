@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
 export const metadata = { title: "Privacy Policy — RoomPartner" };
 
@@ -7,7 +8,7 @@ export default function PrivacyPage() {
     <div className="mx-auto max-w-3xl space-y-4">
       <h1 className="page-title">Privacy Policy</h1>
       <p className="text-sm text-ink-500">Last updated: 17 November 2026 · RoomPartner (demo build v9)</p>
-      <section className="card space-y-2 text-sm">
+      <Card className="space-y-2 p-5 text-sm">
         <h2 className="font-bold">1. What we collect</h2>
         <p>When you create a profile we collect the details you enter: name, age, gender, occupation, city, budget, food, smoking, sleep and cleanliness preferences, languages and bio. When you list a room or rental item we collect the listing details you enter. When you chat, your messages are stored so the other person can read them. When you pay in test mode, Razorpay (test mode) processes the payment — we never see or store your card details.</p>
         <h2 className="font-bold">2. How your data is stored</h2>
@@ -20,7 +21,7 @@ export default function PrivacyPage() {
         <p>You can edit or delete your profile and listings from My Space, clear the demo data from the Dashboard, and sign out at any time. In demo mode, clearing your browser storage deletes your local data. To request deletion of live-mode data, contact the team — contact details will be published when live mode opens.</p>
         <h2 className="font-bold">6. Changes</h2>
         <p>If this policy changes, the date above will change and the new version will be posted here before it takes effect.</p>
-      </section>
+      </Card>
       <p className="text-sm"><Link href="/terms" className="underline">Terms of Use</Link> · <Link href="/" className="underline">Back to Home</Link></p>
     </div>
   );

@@ -2,6 +2,11 @@
 import { useState } from "react";
 import { useSquads, useProfile } from "@/lib/store";
 import { inr } from "@/lib/bundle";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Users } from "lucide-react";
 
 export default function SquadsPage() {
   const [squads, setSquads] = useSquads();
@@ -25,27 +30,43 @@ export default function SquadsPage() {
       <p className="text-sm text-ink-500">Team up as 2–3 people and hunt a 2/3BHK together — split the rent, split the furnishing, move in as a group.</p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {squads.map((s) => (
-          <article key={s.id} className="card">
-            <h3 className="font-bold">{s.name}</h3>
+          <Card key={s.id} className="p-5">
+            <h3 className="flex items-center gap-2 font-bold"><Users className="h-4 w-4 text-brand-600" /> {s.name}</h3>
             <p className="text-sm text-ink-500">{s.target} · {s.city}</p>
             <p className="mt-2 text-lg font-bold">{inr(s.budgetPerPerson)}<span className="text-sm font-normal text-ink-500">/person/mo</span></p>
             <p className="mt-1 text-sm text-ink-600">Members ({s.members.length}/{s.maxMembers}): {s.members.join(", ")}</p>
-            <button onClick={() => join(s.id)} disabled={s.members.length >= s.maxMembers} className="mt-3 w-full btn-primary btn-sm disabled:bg-zinc-300">
+            <Button onClick={() => join(s.id)} disabled={s.members.length >= s.maxMembers} size="sm" className="mt-3 w-full">
               {s.members.length >= s.maxMembers ? "Squad full" : "Join squad"}
-            </button>
-          </article>
+            </Button>
+          </Card>
         ))}
       </div>
-      <section className="card">
-        <h2 className="font-bold">Create a squad</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="field-label">Squad name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HSR Hunters" className="mt-1 w-full rounded-lg border p-2 text-sm" /></label>
-          <label className="field-label">Hunting for<input value={target} onChange={(e) => setTarget(e.target.value)} className="mt-1 w-full rounded-lg border p-2 text-sm" /></label>
-          <label className="field-label">City<input value={city} onChange={(e) => setCity(e.target.value)} className="mt-1 w-full rounded-lg border p-2 text-sm" /></label>
-          <label className="field-label">Budget per person (₹/mo)<input type="number" value={budget} onChange={(e) => setBudget(Number(e.target.value))} className="mt-1 w-full rounded-lg border p-2 text-sm" /></label>
-        </div>
-        <button onClick={create} className="mt-3 btn-primary">Create squad</button>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle>Create a squad</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="squad-name">Squad name</Label>
+              <Input id="squad-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. HSR Hunters" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="squad-target">Hunting for</Label>
+              <Input id="squad-target" value={target} onChange={(e) => setTarget(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="squad-city">City</Label>
+              <Input id="squad-city" value={city} onChange={(e) => setCity(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="squad-budget">Budget per person (₹/mo)</Label>
+              <Input id="squad-budget" type="number" value={budget} onChange={(e) => setBudget(Number(e.target.value))} />
+            </div>
+          </div>
+          <Button onClick={create} className="mt-3">Create squad</Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
