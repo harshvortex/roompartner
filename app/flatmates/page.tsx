@@ -41,17 +41,17 @@ export default function FlatmatesPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div><h1 className="text-2xl font-bold">Compatible flatmates</h1><p className="text-sm text-gray-500">{scored.length} people · ranked by your profile</p></div>
+        <div><h1 className="page-title">Compatible flatmates</h1><p className="text-sm text-ink-500">{scored.length} people · ranked by your profile</p></div>
         <div className="flex gap-2">
-          <button onClick={seedDemo} className="rounded-lg border bg-white px-3 py-2 text-sm">Load demo listings</button>
-          {demoLoaded && <button onClick={clearDemo} className="rounded-lg border bg-white px-3 py-2 text-sm">Clear demo</button>}
+          <button onClick={seedDemo} className="btn-secondary btn-sm">Load demo listings</button>
+          {demoLoaded && <button onClick={clearDemo} className="btn-secondary btn-sm">Clear demo</button>}
         </div>
       </div>
-      {!profile.name && <p className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm">Complete your match profile to get real scores — <a href="/onboarding" className="font-medium underline">complete profile →</a></p>}
-      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or city…" className="w-full rounded-xl border bg-white p-3 text-sm" />
+      {!profile.name && <p className="callout-amber">Complete your match profile to get real scores — <a href="/onboarding" className="font-medium underline">complete profile →</a></p>}
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or city…" className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm shadow-sm" />
       <Filters value={filters} onChange={setFilters} cities={DEMO_CITIES} showBhkGender={false} />
       {scored.length === 0 ? (
-        <div className="rounded-2xl border bg-white p-8 text-center"><p className="font-semibold">No flatmates match those filters yet.</p><p className="mt-1 text-sm text-gray-500">Try widening the budget or clearing the city filter — or load the demo listings.</p><button onClick={seedDemo} className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Load demo listings</button></div>
+        <div className="empty-state"><p className="font-semibold">No flatmates match those filters yet.</p><p className="mt-1 text-sm text-ink-500">Try widening the budget or clearing the city filter — or load the demo listings.</p><button onClick={seedDemo} className="mt-4 btn-primary">Load demo listings</button></div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {scored.map(({ p, result }) => (
@@ -62,22 +62,22 @@ export default function FlatmatesPage() {
       {selected && (
         <DetailModal title={`${selected.name}, ${selected.age}`} onClose={() => setSelected(null)}>
           {(() => { const r = compatibilityScore(profile, selected); return (<>
-            <div className="flex items-center gap-4"><CompatRing score={r.score} /><div><p className="font-bold">{r.score}% — {matchLabel(r.score)}</p><p className="text-gray-500">{selected.occupation} · {selected.city}</p><p className="text-gray-500">Budget {inr(selected.budgetMin)}–{inr(selected.budgetMax)} · moves {selected.moveInDate}</p></div></div>
+            <div className="flex items-center gap-4"><CompatRing score={r.score} /><div><p className="font-bold">{r.score}% — {matchLabel(r.score)}</p><p className="text-ink-500">{selected.occupation} · {selected.city}</p><p className="text-ink-500">Budget {inr(selected.budgetMin)}–{inr(selected.budgetMax)} · moves {selected.moveInDate}</p></div></div>
             <BreakdownBars breakdown={r.breakdown} />
-            {r.notes.length > 0 && <p className="text-gray-600">{r.notes.join(" · ")}</p>}
+            {r.notes.length > 0 && <p className="text-ink-600">{r.notes.join(" · ")}</p>}
             <p>{selected.bio}</p>
-            <p className="text-gray-600">Food: {selected.food} · Smoking: {selected.smoking} · Sleep {selected.sleepTime}–{selected.wakeTime} · Cleanliness {selected.cleanliness}/5 · WFH: {selected.wfh} · Pets: {selected.pets} · Guests: {selected.guestsOk} · {selected.languages.join(", ")}</p>
+            <p className="text-ink-600">Food: {selected.food} · Smoking: {selected.smoking} · Sleep {selected.sleepTime}–{selected.wakeTime} · Cleanliness {selected.cleanliness}/5 · WFH: {selected.wfh} · Pets: {selected.pets} · Guests: {selected.guestsOk} · {selected.languages.join(", ")}</p>
             <p>{selected.phoneVerified ? "✓ Phone verified" : "Phone not verified yet"}</p>
-            <button onClick={() => { setSelected(null); setInterestFor(selected); }} className="w-full rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white">Express interest</button>
+            <button onClick={() => { setSelected(null); setInterestFor(selected); }} className="btn-block">Express interest</button>
           </>); })()}
         </DetailModal>
       )}
       {interestFor && (
         <DetailModal title={`Message ${interestFor.name}`} onClose={() => setInterestFor(null)}>
-          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <button key={m} onClick={() => setMsg(m)} className={`rounded-full border px-3 py-1.5 text-xs ${msg === m ? "bg-emerald-600 text-white border-emerald-600" : "bg-white"}`}>{m}</button>)}</div>
+          <div className="flex flex-wrap gap-2">{QUICK_MESSAGES.map((m) => <button key={m} onClick={() => setMsg(m)} className={`rounded-full border px-3 py-1.5 text-xs ${msg === m ? "bg-brand-600 text-white border-brand-600" : "bg-white"}`}>{m}</button>)}</div>
           <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={3} className="w-full rounded-lg border p-2" />
-          <button onClick={sendInterest} className="w-full rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white">Send interest — opens a chat</button>
-          <p className="text-xs text-gray-500">Your phone number stays hidden until you both agree to chat. Find the thread in <a href="/chats" className="underline">Chats</a>.</p>
+          <button onClick={sendInterest} className="btn-block">Send interest — opens a chat</button>
+          <p className="text-xs text-ink-500">Your phone number stays hidden until you both agree to chat. Find the thread in <a href="/chats" className="underline">Chats</a>.</p>
         </DetailModal>
       )}
     </div>

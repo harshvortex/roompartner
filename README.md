@@ -1,6 +1,16 @@
-# RoomPartner v8 — production-hardened
+# RoomPartner v9 — UI/UX redesign
 
 Find a compatible room partner and a broker-free room, plus rent daily-needed household items. ₹0 brokerage.
+
+## What changed in v9 (2026-11-18) — UI/UX redesign
+
+- **Design system** — `tailwind.config.ts` + `app/globals.css` now define a warm, modern light palette (deep indigo/violet primary, warm amber accent, soft `#F7F7FB` surfaces, white cards), rounded-2xl cards with soft layered shadows, a clear type hierarchy, focus-visible states and smooth hover transitions. Emerald is kept only for semantic success/verified states. **Light design only, as before** — no dark-mode styles, no `prefers-color-scheme: dark`, no `dark:` variants.
+- **Home page** — striking indigo hero with a working city search (GET to `/rooms`), trust strip with the demo figures, four-step "How it works", an explained compatibility-weights preview (Budget 25 / Food 15 / Sleep 15 / Cleanliness 15 / Smoking 10 / Guests 10 / WFH 10), featured flatmates, rooms and rentals from the real demo data, and popular cities.
+- **Header + mobile nav** — gradient logo mark, pill navigation with active states, "Find my match" CTA, and a thumb-friendly mobile bottom nav (Home, Flatmates, Rooms, Rentals, My Space) with safe-area padding.
+- **Cards** — gradient photo areas with initials/category art, verified badges, a more prominent compatibility ring with a match label, prominent pricing, amenity pills and consistent primary/secondary buttons.
+- **Filters** — sort is now chips/pills instead of a select, budget slider shows a live value pill, all selects/inputs share one styled base.
+- **Everywhere else** — one button set (`.btn-primary/.btn-secondary/.btn-ghost/.btn-danger`), one card style, consistent empty states, shimmer loading skeletons, sticky modal headers, and a polished bundle drawer. All routes, flows, demo data, weights, pricing, demo OTP and demo-only copy are unchanged from v8; all v8 hardening (headers, rate limiting, HMAC verify, validation, SEO, `/api/health`) is intact.
+- **Version** — `package.json` and `/api/health` report 9.0.0. Tests unchanged (21/21); no new dependencies.
 
 ## What changed in v8 (2026-11-17) — production hardening
 
@@ -119,7 +129,7 @@ Or import the repo in the Vercel dashboard and set the same two Supabase env var
 - **No real escrow money.** The escrow flow is a demo state machine; real escrow needs a licensed escrow partner.
 - **Demo data only.** The 21 listings are clearly-labelled demo data. Seed real listings before inviting users.
 - **No live deployment.** Needs Harsh's Vercel + Supabase accounts (see below).
-- Next.js 15.5.29; `npm audit` could not be run from this sandbox (registry audit endpoint returns 403 `policy_denied` — the sandbox blocks the audit POST), so run `npm audit` and `npm audit fix` on your own machine before a production deploy. No advisories were fixed in v8 for that reason; the dependency set is unchanged from v7 (Next 15.5.29, React 19, Supabase JS 2.45.4).
+- Next.js 15.5.29; `npm audit` could not be run from this sandbox (registry audit endpoint returns 403 `policy_denied` — the sandbox blocks the audit POST), so run `npm audit` and `npm audit fix` on your own machine before a production deploy. No advisories were fixed in v8 for that reason; the dependency set is unchanged from v7 (and unchanged again in v9) (Next 15.5.29, React 19, Supabase JS 2.45.4).
 
 ## Going live — exact env vars needed
 

@@ -5,9 +5,9 @@ export const metadata = { title: "Privacy Policy — RoomPartner" };
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl font-bold">Privacy Policy</h1>
-      <p className="text-sm text-gray-500">Last updated: 17 November 2026 · RoomPartner (demo build v7)</p>
-      <section className="rounded-2xl border bg-white p-4 shadow-sm space-y-2 text-sm">
+      <h1 className="page-title">Privacy Policy</h1>
+      <p className="text-sm text-ink-500">Last updated: 17 November 2026 · RoomPartner (demo build v9)</p>
+      <section className="card space-y-2 text-sm">
         <h2 className="font-bold">1. What we collect</h2>
         <p>When you create a profile we collect the details you enter: name, age, gender, occupation, city, budget, food, smoking, sleep and cleanliness preferences, languages and bio. When you list a room or rental item we collect the listing details you enter. When you chat, your messages are stored so the other person can read them. When you pay in test mode, Razorpay (test mode) processes the payment — we never see or store your card details.</p>
         <h2 className="font-bold">2. How your data is stored</h2>

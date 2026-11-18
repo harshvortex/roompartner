@@ -1,16 +1,98 @@
 :root { color-scheme: light; }
-html, body { background: #FFFBF5; color-scheme: light; }
+html, body { background: #F7F7FB; color-scheme: light; }
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* LIGHT ONLY — pinned deliberately. The app was built for a light palette only:
-   on phones in dark mode the OS flipped --bg to near-black (#0C0A09) while cards
-   and text stayed light, so the whole page read as black. No dark-mode overrides. */
-body { @apply bg-[#FFFBF5] text-gray-900 antialiased; }
+   on phones in dark mode the OS flipped the background to near-black while cards
+   and text stayed light, so the whole page read as black. No dark-mode overrides,
+   no prefers-color-scheme: dark, no dark: Tailwind variants anywhere. */
+body { @apply bg-surface text-ink-900 antialiased; }
+
+::selection { background: #C7D2FE; color: #1E1B4B; }
 
 /* Accessibility: keyboard focus must always be visible. */
-:focus-visible { outline: 2px solid #059669; outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid #4F46E5; outline-offset: 2px; border-radius: 6px; }
 
 /* Screen-reader-only text (skip link). */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@layer base {
+  /* One consistent look for every text-like form field in the app, so the
+     forms on onboarding / list-room / list-item / login / dashboard match. */
+  input[type="text"], input[type="email"], input[type="number"], input[type="date"],
+  input[type="time"], input[type="tel"], input[type="password"], input[type="search"],
+  select, textarea {
+    @apply w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 shadow-sm transition placeholder:text-ink-400;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus,
+  input[type="date"]:focus, input[type="time"]:focus, input[type="tel"]:focus,
+  input[type="password"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+    @apply border-brand-500 outline-none ring-2 ring-brand-100;
+  }
+  input[type="range"] { @apply w-full accent-brand-600; }
+}
+
+@layer components {
+  /* ---- Buttons (one set, used everywhere) ---- */
+  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 hover:shadow-lift; }
+  .btn-secondary { @apply btn border border-zinc-200 bg-white text-ink-800 shadow-sm hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700; }
+  .btn-ghost { @apply btn text-ink-600 hover:bg-zinc-100; }
+  .btn-danger { @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50; }
+  .btn-sm { @apply min-h-[36px] px-3 py-1.5 text-xs; }
+  .btn-block { @apply btn-primary w-full; }
+
+  /* ---- Cards & sections ---- */
+  .card { @apply rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-card; }
+  .card-hover { @apply card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift; }
+  .card-tight { @apply rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-card; }
+
+  /* ---- Page headers ---- */
+  .eyebrow { @apply text-xs font-bold uppercase tracking-widest text-brand-600; }
+  .page-title { @apply text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl; }
+  .page-sub { @apply mt-1 text-sm text-ink-500; }
+  .section-title { @apply text-lg font-bold tracking-tight text-ink-900; }
+  .section-sub { @apply mt-0.5 text-sm text-ink-500; }
+
+  /* ---- Pills, chips, badges ---- */
+  .chip { @apply inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink-600 transition hover:border-brand-300 hover:text-brand-700; }
+  .chip-active { @apply inline-flex items-center gap-1 rounded-full border border-brand-600 bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white; }
+  .pill { @apply inline-flex items-center rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-ink-600; }
+  .badge-verified { @apply inline-flex items-center gap-0.5 rounded-full bg-ok-50 px-2 py-0.5 text-xs font-semibold text-ok-700 ring-1 ring-ok-100; }
+  .badge-stale { @apply inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800; }
+  .badge-soft { @apply inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700; }
+
+  /* ---- Forms ---- */
+  .field-label { @apply block text-xs font-semibold text-ink-600; }
+  .field-label > input, .field-label > select, .field-label > textarea { @apply mt-1.5; }
+  .form-note { @apply mt-1 text-xs text-ink-400; }
+  .callout { @apply rounded-2xl border border-brand-100 bg-brand-50 p-4 text-sm text-ink-700; }
+  .callout-amber { @apply rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900; }
+  .callout-ok { @apply rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900; }
+
+  /* ---- Empty states & feedback ---- */
+  .empty-state { @apply rounded-2xl border border-dashed border-zinc-300 bg-white p-8 text-center; }
+  .empty-icon { @apply mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-xl; }
+  .toast { @apply rounded-xl border border-brand-100 bg-brand-50 p-3 text-sm text-ink-700; }
+
+  /* ---- Skeletons ---- */
+  .skeleton { @apply animate-pulse rounded-xl bg-zinc-200; }
+  .skeleton-shimmer { background: linear-gradient(90deg, #EFEFF5 25%, #F7F7FB 50%, #EFEFF5 75%); background-size: 800px 100%; animation: shimmer 1.4s linear infinite; }
+
+  /* ---- Hero & decorative (CSS/SVG only — no remote images) ---- */
+  .hero-gradient { background: linear-gradient(135deg, #312E81 0%, #4F46E5 52%, #7C3AED 100%); }
+  .hero-glow { background: radial-gradient(closest-side, rgba(251, 191, 36, 0.35), transparent), radial-gradient(closest-side, rgba(129, 140, 248, 0.4), transparent); }
+  .gradient-text { background: linear-gradient(90deg, #FDE68A, #FBBF24); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .avatar-grad-0 { background: linear-gradient(135deg, #6366F1, #8B5CF6); }
+  .avatar-grad-1 { background: linear-gradient(135deg, #F59E0B, #F97316); }
+  .avatar-grad-2 { background: linear-gradient(135deg, #0EA5E9, #6366F1); }
+  .avatar-grad-3 { background: linear-gradient(135deg, #EC4899, #8B5CF6); }
+  .avatar-grad-4 { background: linear-gradient(135deg, #10B981, #0EA5E9); }
+  .avatar-grad-5 { background: linear-gradient(135deg, #F43F5E, #F59E0B); }
+  .room-thumb-0 { background: linear-gradient(135deg, #E0E7FF, #DDD6FE); }
+  .room-thumb-1 { background: linear-gradient(135deg, #FEF3C7, #FDE68A); }
+  .room-thumb-2 { background: linear-gradient(135deg, #DBEAFE, #C7D2FE); }
+  .room-thumb-3 { background: linear-gradient(135deg, #FCE7F3, #E0E7FF); }
+}

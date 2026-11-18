@@ -21,21 +21,21 @@ export default function ListRoomPage() {
     localStorage.setItem("rp-my-rooms", JSON.stringify([room, ...existing]));
     setDone(true);
   };
-  if (done) return <div className="mx-auto max-w-xl rounded-2xl border bg-white p-8 text-center shadow-sm"><h1 className="text-xl font-bold">Room listed ✓</h1><p className="mt-2 text-sm text-gray-600">Your room is live in demo mode with ₹0 brokerage. In production it goes to a manual review queue first.</p><button onClick={() => router.push("/rooms")} className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">View rooms →</button></div>;
+  if (done) return <div className="mx-auto max-w-xl empty-state shadow-sm"><h1 className="text-xl font-extrabold tracking-tight">Room listed ✓</h1><p className="mt-2 text-sm text-ink-600">Your room is live in demo mode with ₹0 brokerage. In production it goes to a manual review queue first.</p><button onClick={() => router.push("/rooms")} className="mt-4 btn-primary">View rooms →</button></div>;
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <h1 className="text-2xl font-bold">List a room — ₹0 brokerage</h1>
-      <div className="space-y-3 rounded-2xl border bg-white p-5 shadow-sm">
-        <label className="block text-xs font-medium text-gray-600">Title<input className={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Private room in 2BHK, HSR Layout" /></label>
+      <h1 className="page-title">List a room — ₹0 brokerage</h1>
+      <div className="space-y-3 card">
+        <label className="field-label">Title<input className={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Private room in 2BHK, HSR Layout" /></label>
         <div className="grid grid-cols-2 gap-3">
-          <label className="block text-xs font-medium text-gray-600">City<select className={input} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}>{DEMO_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
-          <label className="block text-xs font-medium text-gray-600">Locality<input className={input} value={form.locality} onChange={(e) => setForm({ ...form, locality: e.target.value })} placeholder="HSR Layout" /></label>
-          <label className="block text-xs font-medium text-gray-600">Rent (₹/mo)<input type="number" min={500} max={200000} className={input} value={form.rent} onChange={(e) => setForm({ ...form, rent: Number(e.target.value) })} /></label>
-          <label className="block text-xs font-medium text-gray-600">Deposit (₹)<input type="number" min={0} max={2400000} className={input} value={form.deposit} onChange={(e) => setForm({ ...form, deposit: Number(e.target.value) })} /></label>
-          <label className="block text-xs font-medium text-gray-600">Type<select className={input} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}><option value="room">Room</option><option value="flat">Flat</option><option value="pg">PG</option></select></label>
-          <label className="block text-xs font-medium text-gray-600">Furnishing<select className={input} value={form.furnishing} onChange={(e) => setForm({ ...form, furnishing: e.target.value })}><option value="furnished">Furnished</option><option value="semi-furnished">Semi-furnished</option><option value="unfurnished">Unfurnished</option></select></label>
-          <label className="block text-xs font-medium text-gray-600">BHK<input className={input} value={form.bhk} onChange={(e) => setForm({ ...form, bhk: e.target.value })} /></label>
-          <label className="block text-xs font-medium text-gray-600">Your name<input className={input} value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} placeholder="Your name" /></label>
+          <label className="field-label">City<select className={input} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}>{DEMO_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
+          <label className="field-label">Locality<input className={input} value={form.locality} onChange={(e) => setForm({ ...form, locality: e.target.value })} placeholder="HSR Layout" /></label>
+          <label className="field-label">Rent (₹/mo)<input type="number" min={500} max={200000} className={input} value={form.rent} onChange={(e) => setForm({ ...form, rent: Number(e.target.value) })} /></label>
+          <label className="field-label">Deposit (₹)<input type="number" min={0} max={2400000} className={input} value={form.deposit} onChange={(e) => setForm({ ...form, deposit: Number(e.target.value) })} /></label>
+          <label className="field-label">Type<select className={input} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}><option value="room">Room</option><option value="flat">Flat</option><option value="pg">PG</option></select></label>
+          <label className="field-label">Furnishing<select className={input} value={form.furnishing} onChange={(e) => setForm({ ...form, furnishing: e.target.value })}><option value="furnished">Furnished</option><option value="semi-furnished">Semi-furnished</option><option value="unfurnished">Unfurnished</option></select></label>
+          <label className="field-label">BHK<input className={input} value={form.bhk} onChange={(e) => setForm({ ...form, bhk: e.target.value })} /></label>
+          <label className="field-label">Your name<input className={input} value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} placeholder="Your name" /></label>
         </div>
         {errors.length > 0 && (
           <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
@@ -43,7 +43,7 @@ export default function ListRoomPage() {
             <ul className="mt-1 list-disc pl-5">{errors.map((e) => <li key={e}>{e}</li>)}</ul>
           </div>
         )}
-        <button onClick={save} className="w-full rounded-lg bg-emerald-600 px-4 py-3 font-medium text-white">Publish room</button>
+        <button onClick={save} className="btn-block">Publish room</button>
       </div>
     </div>
   );

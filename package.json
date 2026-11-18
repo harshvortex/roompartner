@@ -6,7 +6,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
-  "description": "RoomPartner v8 — production-hardened: security headers (CSP/HSTS), rate limiting, input validation, error/404 pages, SEO + sitemap, /api/health, structured logging, timing-safe payment verification. Compatible roommates, broker-free rooms, household rentals, chat, Squad Mode, verification, rent-split. Supabase Auth, Razorpay TEST-mode checkout, Realtime chat, auto-moderation, demo escrow. Demo mode runs with seed data + localStorage; no live payments, OTP, KYC or real money.",
+  "description": "RoomPartner v9 \u2014 UI/UX redesign: warm modern light design system (indigo primary, soft neutral backgrounds, rounded-2xl cards, soft shadows), polished hero, richer listing cards, mobile bottom nav, and consistent buttons/inputs/empty states across every page. Same production hardening as v8 (security headers, rate limiting, input validation, error/404 pages, SEO + sitemap, /api/health, structured logging, timing-safe payment verification). Compatible roommates, broker-free rooms, household rentals, chat, Squad Mode, verification, rent-split. Supabase Auth, Razorpay TEST-mode checkout, Realtime chat, auto-moderation, demo escrow. Demo mode runs with seed data + localStorage; no live payments, OTP, KYC or real money.",
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
@@ -25,5 +25,5 @@
     "start": "next start",
     "test": "node scripts/run-tests.mjs"
   },
-  "version": "8.0.0"
+  "version": "9.0.0"
 }

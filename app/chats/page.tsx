@@ -55,40 +55,40 @@ export default function ChatsPage() {
   };
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Chats</h1>
-      <p className="text-sm text-gray-500">Sending an interest opens a real thread here. Your phone number stays hidden until you both agree to chat.</p>
+      <h1 className="page-title">Chats</h1>
+      <p className="text-sm text-ink-500">Sending an interest opens a real thread here. Your phone number stays hidden until you both agree to chat.</p>
       {convs.length === 0 ? (
-        <div className="rounded-2xl border bg-white p-8 text-center">
+        <div className="empty-state">
           <p className="font-semibold">No chats yet.</p>
-          <p className="mt-1 text-sm text-gray-500">Express interest on a flatmate, room or rental — a thread opens here.</p>
-          <Link href="/flatmates" className="mt-4 inline-block rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Find flatmates</Link>
+          <p className="mt-1 text-sm text-ink-500">Express interest on a flatmate, room or rental — a thread opens here.</p>
+          <Link href="/flatmates" className="mt-4 inline-block btn-primary">Find flatmates</Link>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="space-y-2">
             {convs.map((c) => (
-              <button key={c.id} onClick={() => setActiveId(c.id)} className={`w-full rounded-2xl border bg-white p-3 text-left shadow-sm ${active?.id === c.id ? "border-emerald-500" : ""}`}>
+              <button key={c.id} onClick={() => setActiveId(c.id)} className={`w-full rounded-2xl border bg-white p-3 text-left shadow-sm ${active?.id === c.id ? "border-brand-500" : ""}`}>
                 <p className="font-semibold">{c.otherName}</p>
-                <p className="text-xs text-gray-500">{c.title}</p>
-                <p className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleString("en-IN")}</p>
+                <p className="text-xs text-ink-500">{c.title}</p>
+                <p className="text-xs text-ink-400">{new Date(c.createdAt).toLocaleString("en-IN")}</p>
               </button>
             ))}
           </div>
-          <div className="rounded-2xl border bg-white p-4 shadow-sm lg:col-span-2">
+          <div className="card lg:col-span-2">
             {active ? (<>
               <h2 className="font-bold">{active.title}</h2>
               <div className="mt-3 space-y-2">
-                {thread.length === 0 && <p className="text-sm text-gray-500">Say hi — introduce yourself and your move-in date.</p>}
+                {thread.length === 0 && <p className="text-sm text-ink-500">Say hi — introduce yourself and your move-in date.</p>}
                 {thread.map((m) => (
-                  <div key={m.id} className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.sender === "me" ? "ml-auto bg-emerald-600 text-white" : "bg-gray-100"}`}>{m.body}</div>
+                  <div key={m.id} className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.sender === "me" ? "ml-auto bg-brand-600 text-white" : "bg-surface-muted"}`}>{m.body}</div>
                 ))}
               </div>
               <div className="mt-4 flex gap-2">
                 <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Type a message…" className="flex-1 rounded-lg border p-2 text-sm" />
-                <button onClick={send} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Send</button>
+                <button onClick={send} className="btn-primary">Send</button>
               </div>
-              <p className="mt-2 text-xs text-gray-500">{live ? "Live: connected to Supabase Realtime — replies from the other side arrive here." : "Demo mode: replies marked “[Demo reply]” are simulated so the flow can be shown. Real two-way chat needs accounts and Supabase Realtime."}</p>
-            </>) : <p className="text-sm text-gray-500">Pick a conversation.</p>}
+              <p className="mt-2 text-xs text-ink-500">{live ? "Live: connected to Supabase Realtime — replies from the other side arrive here." : "Demo mode: replies marked “[Demo reply]” are simulated so the flow can be shown. Real two-way chat needs accounts and Supabase Realtime."}</p>
+            </>) : <p className="text-sm text-ink-500">Pick a conversation.</p>}
           </div>
         </div>
       )}

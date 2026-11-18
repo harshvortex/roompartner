@@ -5,9 +5,9 @@ export const metadata = { title: "Terms of Use — RoomPartner" };
 export default function TermsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl font-bold">Terms of Use</h1>
-      <p className="text-sm text-gray-500">Last updated: 17 November 2026 · RoomPartner (demo build v7)</p>
-      <section className="rounded-2xl border bg-white p-4 shadow-sm space-y-2 text-sm">
+      <h1 className="page-title">Terms of Use</h1>
+      <p className="text-sm text-ink-500">Last updated: 17 November 2026 · RoomPartner (demo build v9)</p>
+      <section className="card space-y-2 text-sm">
         <h2 className="font-bold">1. What RoomPartner is</h2>
         <p>RoomPartner helps you find a compatible room partner and a broker-free room, and rent household items from other users. We are a listing and matching platform — we are not a broker, not a landlord, and not a party to any tenancy, rental or sale between users.</p>
         <h2 className="font-bold">2. No brokerage, ever</h2>

@@ -74,7 +74,7 @@ export function RazorpayCheckout({ product, label }: { product: ProductId; label
           if (v.verified) { recordPurchase(resp.razorpay_payment_id); setStatus(`${p.name} paid in TEST mode (${formatRupees(p.amountPaise)}). Test payment only — no real charge.`); }
           else setStatus("Payment signature verification failed. No purchase recorded.");
         },
-        theme: { color: "#059669" },
+        theme: { color: "#4F46E5" },
       });
       rzp.open();
     } catch {
@@ -86,10 +86,10 @@ export function RazorpayCheckout({ product, label }: { product: ProductId; label
 
   return (
     <div>
-      <button onClick={pay} disabled={busy} className="mt-2 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white disabled:bg-gray-300">
+      <button onClick={pay} disabled={busy} className="btn-block mt-2">
         {busy ? "Processing…" : label || `Pay ${formatRupees(p.amountPaise)} (test mode)`}
       </button>
-      {status && <p className="mt-2 text-xs text-gray-600">{status}</p>}
+      {status && <p className="mt-2 text-xs text-ink-600">{status}</p>}
     </div>
   );
 }

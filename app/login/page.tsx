@@ -81,41 +81,41 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-md space-y-4">
-      <h1 className="text-2xl font-bold">Sign in</h1>
-      <p className="text-sm text-gray-500">
+      <h1 className="page-title">Sign in</h1>
+      <p className="text-sm text-ink-500">
         {live ? "Live mode: Google sign-in and phone OTP go through Supabase Auth." : "Demo mode: no Supabase keys are set, so sign-in is simulated locally. No SMS is sent and no real account is created."}
       </p>
       {user ? (
-        <div className="rounded-2xl border bg-white p-4 shadow-sm">
+        <div className="card">
           <p className="font-semibold">Signed in as {user}</p>
-          <p className="text-sm text-gray-500">{live ? "Supabase Auth session." : "Demo user (localStorage only)."}</p>
-          <button onClick={signOut} className="mt-3 rounded-lg border px-4 py-2 text-sm">Sign out</button>
+          <p className="text-sm text-ink-500">{live ? "Supabase Auth session." : "Demo user (localStorage only)."}</p>
+          <button onClick={signOut} className="mt-3 btn-secondary btn-sm">Sign out</button>
         </div>
       ) : (
         <>
-          <section className="rounded-2xl border bg-white p-4 shadow-sm">
+          <section className="card">
             <h2 className="font-bold">Continue with Google</h2>
             {!live && <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com (demo only)" className="mt-2 w-full rounded-lg border p-2 text-sm" />}
-            <button onClick={signInGoogle} className="mt-3 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Continue with Google</button>
-            <p className="mt-2 text-xs text-gray-500">{live ? "Redirects to Google, then back to /auth/callback." : "Demo: no Google account is used."}</p>
+            <button onClick={signInGoogle} className="mt-3 w-full btn-primary">Continue with Google</button>
+            <p className="mt-2 text-xs text-ink-500">{live ? "Redirects to Google, then back to /auth/callback." : "Demo: no Google account is used."}</p>
           </section>
-          <section className="rounded-2xl border bg-white p-4 shadow-sm">
+          <section className="card">
             <h2 className="font-bold">Phone OTP</h2>
             <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className="mt-2 w-full rounded-lg border p-2 text-sm" />
             {!otpSent ? (
-              <button onClick={sendOtp} className="mt-3 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Send OTP</button>
+              <button onClick={sendOtp} className="mt-3 w-full btn-primary">Send OTP</button>
             ) : (
               <>
                 <input value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="6-digit OTP" className="mt-2 w-full rounded-lg border p-2 text-sm" />
                 {!live && <p className="mt-2 rounded-lg bg-amber-50 p-2 text-sm">Demo OTP: <b>{DEMO_OTP}</b> — shown here because no SMS is sent in demo mode.</p>}
-                <button onClick={verifyOtp} className="mt-3 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Verify OTP</button>
+                <button onClick={verifyOtp} className="mt-3 w-full btn-primary">Verify OTP</button>
               </>
             )}
           </section>
         </>
       )}
-      {msg && <p className="rounded-lg bg-emerald-50 p-3 text-sm">{msg}</p>}
-      <p className="text-xs text-gray-500">By signing in you agree to the <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>. Real Aadhaar/ID verification is not part of sign-in — the trust score stays simulated.</p>
+      {msg && <p className="toast text-sm">{msg}</p>}
+      <p className="text-xs text-ink-500">By signing in you agree to the <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>. Real Aadhaar/ID verification is not part of sign-in — the trust score stays simulated.</p>
     </div>
   );
 }
