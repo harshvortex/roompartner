@@ -54,6 +54,9 @@ function windowStartOf(bucket: Bucket): number {
 export const paymentLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 /** General API: 60 requests / minute per IP. */
 export const apiLimiter = createRateLimiter({ windowMs: 60_000, max: 60 });
+/** Auth callback: 10 code-exchange attempts / minute per IP — slows
+ * brute-force guessing of auth codes without blocking real sign-ins. */
+export const authCallbackLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
 export function rateLimitHeaders(result: RateLimitResult): Record<string, string> {
   return {

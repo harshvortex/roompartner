@@ -79,21 +79,29 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div><h1 className="page-title">Dashboard</h1><p className="text-sm text-ink-500">Trust &amp; safety, your visits, rent-split and the production picture.</p></div>
+        <div>
+          <p className="eyebrow">Your home base</p>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-sub">Trust &amp; safety, your visits, rent-split and the production picture.</p>
+        </div>
         <button onClick={seedDemo} className="btn-secondary btn-sm">Load production demo (21 items)</button>
       </div>
 
-      <section className="grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
-        <div className="rounded-2xl border border-zinc-200/80 bg-white p-4 text-center shadow-card"><div className="text-xl font-bold">{stats.listings}</div><div className="text-xs text-ink-500">live listings (demo)</div></div>
-        <div className="rounded-2xl border border-zinc-200/80 bg-white p-4 text-center shadow-card"><div className="text-xl font-bold">{stats.verified}</div><div className="text-xs text-ink-500">verified</div></div>
-        <div className="rounded-2xl border border-zinc-200/80 bg-white p-4 text-center shadow-card"><div className="text-xl font-bold">{inr(stats.brokerageSaved)}</div><div className="text-xs text-ink-500">brokerage saved</div></div>
-        <div className="rounded-2xl border border-zinc-200/80 bg-white p-4 text-center shadow-card"><div className="text-xl font-bold">{stats.openReports}</div><div className="text-xs text-ink-500">open reports</div></div>
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="card-tight text-center"><div className="text-2xl font-extrabold tracking-tight">{stats.listings}</div><div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">live listings (demo)</div></div>
+        <div className="card-tight text-center"><div className="text-2xl font-extrabold tracking-tight">{stats.verified}</div><div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">verified</div></div>
+        <div className="card-tight text-center"><div className="text-2xl font-extrabold tracking-tight">{inr(stats.brokerageSaved)}</div><div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">brokerage saved</div></div>
+        <div className="card-tight text-center"><div className="text-2xl font-extrabold tracking-tight">{stats.openReports}</div><div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">open reports</div></div>
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="card">
-          <h2 className="font-bold">Trust &amp; Safety Center</h2>
+          <h2 className="section-title">Trust &amp; Safety Center</h2>
+          <p className="section-sub">How much others can trust your profile.</p>
           <p className="mt-2 text-3xl font-bold">{score} <span className="text-sm font-normal text-ink-500">/ 100 — {trustLabel(score)}</span></p>
+          <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-surface-muted" role="progressbar" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="Trust score">
+            <div className="h-full rounded-full bg-gradient-to-r from-brand-600 to-violet-500 transition-all" style={{ width: `${score}%` }} />
+          </div>
           <p className="mt-1 text-sm text-ink-600">Base 42 for a new profile · +30 phone verified · +20 profile complete = 92 max. This is a simulated score — not a government ID check. Phone OTP via Supabase Auth is wired (demo OTP in demo mode); real Aadhaar/KYC is still a future step.</p>
           <p className="mt-2 text-sm">Phone: {trust.phoneVerified ? `✓ Verified${trust.verifiedAt ? ` (${new Date(trust.verifiedAt).toLocaleDateString("en-IN")})` : ""}` : "Not verified yet"}</p>
           {!trust.phoneVerified && <button onClick={verifyPhone} className="mt-3 btn-primary">Verify phone (simulated — no OTP sent)</button>}
@@ -114,7 +122,7 @@ export default function DashboardPage() {
         </section>
 
         <section className="card">
-          <h2 className="font-bold">Rent Split Calculator</h2>
+          <h2 className="section-title">Rent Split Calculator</h2>
           <p className="mt-1 text-sm text-ink-600">Bundle monthly total: <b>{inr(summary.monthlyTotal)}</b> ({summary.itemCount} items) · Deposits {inr(summary.depositTotal)} · First month {inr(summary.firstMonthCost)}</p>
           <label className="mt-3 field-label">Split between
             <input type="number" min={1} max={6} value={people} onChange={(e) => setPeople(Number(e.target.value))} className="mt-1 w-24 rounded-lg border p-2 text-sm" />
@@ -131,28 +139,37 @@ export default function DashboardPage() {
       </div>
 
       <section className="card">
-        <h2 className="font-bold">Your visits ({visits.length})</h2>
-        {visits.length === 0 ? <p className="mt-2 text-sm text-ink-500">No visits booked yet. Book a visit from a room&apos;s detail view in the live app — in this codebase, visits are created from the Rooms page flow and confirmed here.</p> : (
+        <h2 className="section-title">Your visits ({visits.length})</h2>
+        <p className="section-sub">Visits you booked — confirm them, then mark them done.</p>
+        {visits.length === 0 ? (
+          <div className="empty-state mt-3">
+            <div className="empty-icon">📅</div>
+            <p className="mt-2 font-semibold">No visits booked yet</p>
+            <p className="mt-1 text-sm text-ink-500">Open any room, check its details and book a visit — it lands here.</p>
+            <Link href="/rooms" className="mt-4 inline-block btn-primary">Browse rooms</Link>
+          </div>
+        ) : (
           <ul className="mt-2 divide-y text-sm">{visits.map((v) => (
             <li key={v.id} className="flex flex-wrap items-center justify-between gap-2 py-2"><span>{v.roomTitle} · {v.date} {v.time} · <b>{v.status}</b></span><span className="flex gap-2">{v.status === "requested" && <button onClick={() => confirmVisit(v.id)} className="btn-secondary btn-sm">Confirm</button>}{v.status === "confirmed" && <button onClick={() => doneVisit(v.id)} className="btn-primary btn-sm">Mark done</button>}</span></li>
           ))}</ul>
         )}
-        <p className="mt-3 text-sm text-ink-500">Book a visit: open any room in <Link href="/rooms" className="font-medium underline">Rooms</Link>, open its details and use “Book a visit” — the visit lands here, where you confirm it and mark it done.</p>
+        <p className="mt-3 text-sm text-ink-500">Visits are booked from a room&apos;s detail view — open any room in <Link href="/rooms" className="font-medium underline">Rooms</Link> and use “Book a visit”.</p>
       </section>
 
       <section className="card">
-        <h2 className="font-bold">Pricing — structure, not live billing</h2>
+        <h2 className="section-title">Pricing — structure, not live billing</h2>
+        <p className="section-sub">What each plan costs, before any payment is taken.</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border p-3"><p className="font-semibold">{PRICING.seekerPass.name}</p><p className="text-lg font-bold">₹{PRICING.seekerPass.price}{PRICING.seekerPass.period}</p><p className="text-xs text-ink-500">{PRICING.seekerPass.note}</p><RazorpayCheckout product="seekerPass" /></div>
-          <div className="rounded-xl border p-3"><p className="font-semibold">{PRICING.verification.name}</p><p className="text-lg font-bold">₹{PRICING.verification.price} {PRICING.verification.period}</p><p className="text-xs text-ink-500">{PRICING.verification.note}</p><RazorpayCheckout product="verification" /></div>
-          <div className="rounded-xl border p-3"><p className="font-semibold">{PRICING.ownerBoost.name}</p><p className="text-lg font-bold">₹{PRICING.ownerBoost.price}{PRICING.ownerBoost.period}</p><p className="text-xs text-ink-500">{PRICING.ownerBoost.note}</p><RazorpayCheckout product="ownerBoost" /></div>
+          <div className="card-tight"><p className="font-semibold">{PRICING.seekerPass.name}</p><p className="text-lg font-bold">₹{PRICING.seekerPass.price}{PRICING.seekerPass.period}</p><p className="text-xs text-ink-500">{PRICING.seekerPass.note}</p><RazorpayCheckout product="seekerPass" /></div>
+          <div className="card-tight"><p className="font-semibold">{PRICING.verification.name}</p><p className="text-lg font-bold">₹{PRICING.verification.price} {PRICING.verification.period}</p><p className="text-xs text-ink-500">{PRICING.verification.note}</p><RazorpayCheckout product="verification" /></div>
+          <div className="card-tight"><p className="font-semibold">{PRICING.ownerBoost.name}</p><p className="text-lg font-bold">₹{PRICING.ownerBoost.price}{PRICING.ownerBoost.period}</p><p className="text-xs text-ink-500">{PRICING.ownerBoost.note}</p><RazorpayCheckout product="ownerBoost" /></div>
         </div>
         <p className="mt-2 text-xs text-ink-500">Razorpay TEST MODE ONLY — test card / demo simulation, no real charge. Live keys are refused by the server until business KYC is done. Never charge brokerage or a % of rent/deposit.</p>
         {purchases.length > 0 && <p className="mt-2 text-xs text-emerald-700">Purchases recorded (test/demo): {purchases.join(", ")}</p>}
       </section>
 
       <section className="card">
-        <h2 className="font-bold">Deposit Escrow — demo only, no real money</h2>
+        <h2 className="section-title">Deposit Escrow <span className="badge-soft">demo only, no real money</span></h2>
         <p className="mt-1 text-sm text-ink-600">Created → Held → Released / Refunded (or Disputed). Real escrow needs a licensed escrow partner and KYC — this is a demo state machine only.</p>
         <button onClick={createDemoEscrow} disabled={!rooms.length} className="mt-3 btn-primary disabled:bg-zinc-300">Create demo escrow for first room (deposit)</button>
         {escrows.length === 0 ? <p className="mt-2 text-sm text-ink-500">No escrows yet.</p> : (
@@ -166,7 +183,7 @@ export default function DashboardPage() {
       </section>
 
       <section className="card">
-        <h2 className="font-bold">Automated moderation — rule-based flags</h2>
+        <h2 className="section-title">Automated moderation — rule-based flags</h2>
         <p className="mt-1 text-sm text-ink-600">Listings are auto-flagged for banned phrases, suspicious prices and missing city. A flag does not delete a listing — it goes to the queue above for a human to review.</p>
         {autoFlags.length === 0 ? <p className="mt-2 text-sm text-ink-500">No auto-flags on the current listings.</p> : (
           <ul className="mt-3 divide-y text-sm">{autoFlags.map((f, i) => (
@@ -176,12 +193,12 @@ export default function DashboardPage() {
       </section>
 
       <section className="card">
-        <h2 className="font-bold">Production &amp; Hosting</h2>
+        <h2 className="section-title">Production &amp; Hosting</h2>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-700">
           <li>Mobile-first, light design only — pinned to light so dark-mode phones never flip it black.</li>
           <li>Demo mode: seed data + localStorage, no keys needed. With Supabase keys, lists come from Postgres (see supabase/schema.sql).</li>
           <li>Deploy: push to GitHub → import in Vercel → set NEXT_PUBLIC_SUPABASE_URL / ANON_KEY → deploy. Cost ~$45/mo (Vercel Pro $20 + Supabase Pro $25) once you take real users; $0 on free tiers for a demo.</li>
-          <li>v9 code is ready for: Supabase Auth (Google + phone OTP), Razorpay test-mode checkout, Realtime chat, rule-based auto-moderation, demo escrow, Privacy &amp; Terms. Still NOT live: real payments (needs Razorpay KYC), real OTP (MSG91/DLT), Aadhaar/KYC (needs UIDAI approval), real listings. Those need accounts / approvals (days–weeks).</li>
+          <li>v10 code is ready for: Supabase Auth (email magic link + password, Google + phone OTP), Razorpay test-mode checkout, Realtime chat, rule-based auto-moderation, demo escrow, Privacy &amp; Terms. Still NOT live: real payments (needs Razorpay KYC), real OTP (MSG91/DLT), Aadhaar/KYC (needs UIDAI approval), real listings. Those need accounts / approvals (days–weeks).</li>
         </ul>
       </section>
     </div>

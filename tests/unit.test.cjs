@@ -225,3 +225,41 @@ test("health: payload has version, mode, no secrets", () => {
   assert.equal(h.checks.razorpay, "demo");
   assert.equal(JSON.stringify(h).includes("secret"), false);
 });
+
+// ---- v10: email auth validation + safe redirects + callback limiter ----
+const { isValidEmail, isValidPassword, safeRedirectPath, demoUserFromEmail } = require("../.test-build/auth.js");
+const { authCallbackLimiter } = require("../.test-build/rateLimit.js");
+
+test("auth v10: email + password validation", () => {
+  assert.equal(isValidEmail("harsh@example.com"), true);
+  assert.equal(isValidEmail("harsh+room@example.co.in"), true);
+  assert.equal(isValidEmail("not-an-email"), false);
+  assert.equal(isValidEmail("a@b"), false);
+  assert.equal(isValidEmail("a b@c.com"), false);
+  assert.equal(isValidEmail(""), false);
+  assert.equal(isValidPassword("12345678"), true);
+  assert.equal(isValidPassword("longpassword"), true);
+  assert.equal(isValidPassword("short"), false);
+  assert.equal(isValidPassword(""), false);
+  assert.deepEqual(demoUserFromEmail("  Harsh@Example.com "), { id: "demo-harsh@example.com", label: "harsh@example.com", provider: "email", phoneVerified: false });
+});
+
+test("auth v10: redirect targets must be same-site paths", () => {
+  assert.equal(safeRedirectPath("/dashboard"), "/dashboard");
+  assert.equal(safeRedirectPath("/my-space?x=1"), "/my-space?x=1");
+  assert.equal(safeRedirectPath(null), "/dashboard");
+  assert.equal(safeRedirectPath(undefined), "/dashboard");
+  assert.equal(safeRedirectPath(""), "/dashboard");
+  assert.equal(safeRedirectPath("https://evil.example.com"), "/dashboard");
+  assert.equal(safeRedirectPath("//evil.example.com"), "/dashboard");
+  assert.equal(safeRedirectPath("/\\evil.com"), "/dashboard");
+  assert.equal(safeRedirectPath("javascript:alert(1)"), "/dashboard");
+});
+
+test("auth v10: callback limiter allows 10 attempts, then blocks per IP", () => {
+  authCallbackLimiter.reset();
+  for (let i = 0; i < 10; i++) assert.equal(authCallbackLimiter.check("cb-ip-1").allowed, true);
+  assert.equal(authCallbackLimiter.check("cb-ip-1").allowed, false);
+  assert.equal(authCallbackLimiter.check("cb-ip-1").remaining, 0);
+  assert.equal(authCallbackLimiter.check("cb-ip-2").allowed, true); // different IP, own bucket
+});

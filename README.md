@@ -1,6 +1,36 @@
-# RoomPartner v9 — UI/UX redesign
+# RoomPartner v10 — real email auth + security hardening
 
 Find a compatible room partner and a broker-free room, plus rent daily-needed household items. ₹0 brokerage.
+
+## What changed in v10 (2026-11-18) — real email auth + security hardening
+
+- **Real email auth (works today, no external provider needed)** — `/login` now has an Email section alongside Google and Phone: (a) magic link — enter your email, Supabase sends a sign-in link, the page shows a "check your inbox" state; (b) email + password — create an account (with a "check your inbox to confirm your email" state) or sign in. Email format and password length (min 8) are validated client-side, and Supabase's own error messages are shown honestly. Sessions live in SSR cookies via `@supabase/ssr`; `localStorage` `rp-auth-user` is only a display label in live mode and stays the demo user only in demo mode. Sign-out clears both.
+- **Auth callback fixed for both flows** — `app/auth/callback/route.ts` now handles PKCE `code` exchange (OAuth + newer email links) AND `token_hash` + `type` email links (signup / magiclink / recovery), and the `?next=` target is validated to same-site relative paths only (`lib/auth.ts` `safeRedirectPath`), so a crafted link can never bounce a user to an outside site.
+- **Server-side route protection** — `middleware.ts` refreshes the Supabase session on every matched request and protects `/dashboard`, `/my-space`, `/chats`, `/list-room`, `/list-item`: a visitor with no valid session is redirected to `/login?next=<original path>`. In demo mode (no Supabase env vars) the guard does not apply — pages load exactly as before, so nobody is locked out of the demo.
+- **Auth callback rate limit** — `/auth/callback` is limited to 10 attempts/min/IP (429 + `Retry-After`) to slow brute-force code guessing. API rate limits unchanged (payments 10/min, other APIs 60/min).
+- **Payments are bound to the signed-in user** — `app/api/payments/create-order` now requires a valid Supabase session (SSR cookies or a Bearer token) when Supabase is configured and takes the user id from that session, never from the request body; unauthenticated requests get 401 in live mode. Demo mode behaviour is unchanged.
+- **Security headers audited (v10)** — CSP, HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, Referrer-Policy, Permissions-Policy and Cross-Origin-Opener-Policy in `next.config.ts` were checked against what the app actually loads (Supabase `*.supabase.co`, Razorpay checkout). Nothing was missing; the only change is `worker-src 'self'` added to the CSP. Permissions-Policy deliberately does not restrict `payment=()` (Razorpay checkout uses the Payment Request API in some flows).
+- **Login page polished** — the three sign-in methods (Google, Email, Phone) are clean stacked cards in the v9 design system, with clear "check your inbox", error and signed-in states. Dashboard, My Space, chats and the list-room/list-item forms got a consistency pass (spacing, section headings, intentional empty states, primary/secondary buttons) — no route, flow or data changed.
+- **Tests** — `npm test` now covers the new email/password validation, safe redirect paths and the callback limiter (see "Tests" below). **Version** — `package.json` and `/api/health` report 10.0.0. No new dependencies.
+
+## SECURITY — what is enforced, and what is NOT real yet
+
+Enforced in this build:
+- **Supabase RLS** on all 17 tables (verified in the live project: profiles, rooms, rentals, interests, saved, bookings, conversations, messages, squads, visits, reports, bundles, payments, escrows, moderation flags) — the anon key alone cannot read or write another user's rows.
+- **Server-side session guard** — protected pages redirect to `/login` when there is no valid Supabase session (live mode only); the session is refreshed in middleware so it does not silently expire.
+- **Session-bound payments** — payment orders are created for the authenticated user id from the session, never from a client-supplied id.
+- **Rate limits** — payments 10/min/IP, other APIs 60/min/IP, auth callback 10/min/IP (in-memory per instance; use Upstash Redis / Vercel KV for a strict global limit).
+- **Payment verification** — Razorpay HMAC signature compared in constant time; amounts looked up server-side; live keys refused (403); no upstream error body ever returned to the client.
+- **Security headers** — CSP (incl. `frame-ancestors 'none'`), HSTS, `X-Frame-Options: DENY`, nosniff, Referrer-Policy, Permissions-Policy, COOP (see `next.config.ts`).
+- **Validation** — all form input validated server-side where it matters (age, budgets, rent, deposits) with human-readable errors; API bodies capped at 4 KB.
+
+NOT real yet — do not mistake these for live features:
+- **Google sign-in** needs the Google provider enabled in Supabase (Auth → Providers → Google) with a Google Cloud OAuth client. Until then it fails honestly and email works instead.
+- **Phone OTP (real SMS)** needs a phone provider in Supabase (MSG91 + TRAI DLT, ~10 days). Until then, live phone OTP fails with an honest message.
+- **Payments are test-mode only** — no Razorpay live keys, no real charges; live keys are refused by the server until business KYC is complete.
+- **Aadhaar/KYC not implemented** — the trust score (42 → 92) is simulated; real verification needs UIDAI approval.
+- **Escrow is a demo state machine** — no real money moves; real escrow needs a licensed escrow partner.
+- **Demo data only** — the 21 listings are seeded demo data; seed real listings before inviting users.
 
 ## What changed in v9 (2026-11-18) — UI/UX redesign
 
@@ -111,7 +141,8 @@ npm start
 1. Create a project at https://supabase.com, copy the project URL and anon key.
 2. `cp .env.example .env.local` and fill it in.
 3. In the Supabase SQL Editor, run `supabase/schema.sql`. It creates the MVP tables plus v5 tables: `conversations`, `messages`, `squads`, `squad_members`, `visits`, `reports`, `saved_bundles`, with indexes and RLS notes.
-4. Restart `npm run dev`. When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set, lists are fetched from Supabase, sign-in works via Supabase Auth (`/login`, Google + phone OTP), and chat uses Supabase Realtime; profile/bundle/saved stay in localStorage in demo mode.
+4. Restart `npm run dev`. When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set, lists are fetched from Supabase, sign-in works via Supabase Auth (`/login`, email magic link + email/password + Google + phone OTP), and chat uses Supabase Realtime; profile/bundle/saved stay in localStorage in demo mode.
+5. **Auth redirect URLs (required for email + Google sign-in to land back in the app):** in Supabase → Auth → URL Configuration, set Site URL to `https://roompartner-one.vercel.app` and add these Redirect URLs: `https://roompartner-one.vercel.app/auth/callback` and `https://roompartner-one.vercel.app/auth/callback?next=/dashboard` (plus `http://localhost:3000/auth/callback` for local dev). Without these, Supabase refuses to redirect after sign-in.
 
 ## Deploy to Vercel
 
@@ -129,7 +160,7 @@ Or import the repo in the Vercel dashboard and set the same two Supabase env var
 - **No real escrow money.** The escrow flow is a demo state machine; real escrow needs a licensed escrow partner.
 - **Demo data only.** The 21 listings are clearly-labelled demo data. Seed real listings before inviting users.
 - **No live deployment.** Needs Harsh's Vercel + Supabase accounts (see below).
-- Next.js 15.5.29; `npm audit` could not be run from this sandbox (registry audit endpoint returns 403 `policy_denied` — the sandbox blocks the audit POST), so run `npm audit` and `npm audit fix` on your own machine before a production deploy. No advisories were fixed in v8 for that reason; the dependency set is unchanged from v7 (and unchanged again in v9) (Next 15.5.29, React 19, Supabase JS 2.45.4).
+- Next.js 15.5.29; `npm audit` could not be run from this sandbox (registry audit endpoint returns 403 `policy_denied` — the sandbox blocks the audit POST), so run `npm audit` and `npm audit fix` on your own machine before a production deploy. No advisories were fixed in v8 for that reason; the dependency set is unchanged from v7 (and unchanged again in v9 and v10) (Next 15.5.29, React 19, Supabase JS 2.45.4).
 
 ## Going live — exact env vars needed
 
@@ -137,6 +168,7 @@ Or import the repo in the Vercel dashboard and set the same two Supabase env var
 |---|---|---|
 | Vercel deploy | Vercel account, import repo | — |
 | Supabase project | Supabase account + project | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`; run `supabase/schema.sql`; Database → Replication → enable `messages` for Realtime |
+| Email auth (works today) | Nothing extra — Supabase built-in | Auth → URL Configuration: Site URL `https://roompartner-one.vercel.app`; Redirect URLs `https://roompartner-one.vercel.app/auth/callback` and `https://roompartner-one.vercel.app/auth/callback?next=/dashboard` |
 | Google sign-in | Google Cloud OAuth client | Enable Google provider in Supabase Auth with the OAuth client ID/secret |
 | Phone OTP (real SMS) | MSG91 account + TRAI DLT registration (~10 days) | Enable Phone provider in Supabase Auth with the SMS provider |
 | Razorpay test | Razorpay account, test keys | `RAZORPAY_KEY_ID` (`rzp_test_*`), `RAZORPAY_KEY_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID` |

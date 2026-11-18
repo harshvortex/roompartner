@@ -4,6 +4,16 @@ import type { NextConfig } from "next";
 // scripts/styles; Razorpay Checkout needs its own domains. No 'unsafe-eval'.
 // frame-ancestors 'none' stops clickjacking (our pages can never be framed);
 // Razorpay's own checkout iframe is allowed via frame-src, not by framing us.
+// Audit (v10, 2026-11-18): every header below was checked against what the
+// app actually loads — Supabase Auth/Realtime/Storage all live under
+// *.supabase.co (covered by connect-src; wss: Realtime matches the https:
+// source per CSP), Razorpay Checkout under checkout.razorpay.com /
+// api.razorpay.com (script/frame/connect). Nothing was missing and nothing
+// could be tightened without breaking one of those: Permissions-Policy
+// deliberately does NOT restrict payment=() (Razorpay's checkout uses the
+// Payment Request API in some flows), and form-action stays 'self' because
+// Razorpay posts happen inside its own iframe, not our document. The only
+// addition in v10 is worker-src 'self' (the app uses no web workers).
 const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
@@ -12,6 +22,7 @@ const csp = [
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://api.razorpay.com https://checkout.razorpay.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com",
+  "worker-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

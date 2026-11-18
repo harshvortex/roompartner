@@ -31,13 +31,24 @@ export default function MySpacePage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="page-title">My Space</h1>
-      <p className="text-sm text-ink-500">{profile.name ? `Welcome back, ${profile.name}.` : "Complete your profile to get personalised matches."} {profile.city ? `· ${profile.city} · budget ${inr(profile.budgetMin)}–${inr(profile.budgetMax)}` : ""}</p>
+      <header>
+        <p className="eyebrow">Your space</p>
+        <h1 className="page-title">My Space</h1>
+        <p className="page-sub">{profile.name ? `Welcome back, ${profile.name}.` : "Complete your profile to get personalised matches."} {profile.city ? `· ${profile.city} · budget ${inr(profile.budgetMin)}–${inr(profile.budgetMax)}` : ""}</p>
+      </header>
       <div className="grid gap-4 lg:grid-cols-2">
         <MoveInChecklist done={checklist} onToggle={toggleChecklist} />
         <div className="card">
-          <h2 className="font-bold">Move-in Bundle summary</h2>
-          {bundle.length === 0 ? <p className="mt-2 text-sm text-ink-500">Nothing bundled yet. Add a room or rental with + Bundle.</p> : (
+          <h2 className="section-title">Move-in Bundle summary</h2>
+          <p className="section-sub">Everything you bundled for the move, in one place.</p>
+          {bundle.length === 0 ? (
+            <div className="empty-state mt-3">
+              <div className="empty-icon">📦</div>
+              <p className="mt-2 font-semibold">Nothing bundled yet</p>
+              <p className="mt-1 text-sm text-ink-500">Add a room or rental with + Bundle and it shows up here.</p>
+              <Link href="/rooms" className="mt-4 inline-block btn-primary">Browse rooms</Link>
+            </div>
+          ) : (
             <div className="mt-2 space-y-1 text-sm">
               <p>Items: {summary.itemCount} · Monthly: <b>{inr(summary.monthlyTotal)}</b></p>
               <p>Deposits: <b>{inr(summary.depositTotal)}</b> · First month: <b>{inr(summary.firstMonthCost)}</b></p>
@@ -48,17 +59,32 @@ export default function MySpacePage() {
         </div>
       </div>
       <section className="card">
-        <h2 className="font-bold">Saved shortlist ({savedItems.length})</h2>
-        {savedItems.length === 0 ? <p className="mt-2 text-sm text-ink-500">Tap ♡ Save on any flatmate, room or rental to keep it here.</p> : (
+        <h2 className="section-title">Saved shortlist ({savedItems.length})</h2>
+        {savedItems.length === 0 ? (
+          <div className="empty-state mt-3">
+            <div className="empty-icon">♡</div>
+            <p className="mt-2 font-semibold">Nothing saved yet</p>
+            <p className="mt-1 text-sm text-ink-500">Tap ♡ Save on any flatmate, room or rental to keep it here.</p>
+            <Link href="/flatmates" className="mt-4 inline-block btn-primary">Find flatmates</Link>
+          </div>
+        ) : (
           <ul className="mt-2 divide-y text-sm">{savedItems.map((s) => (
             <li key={s.id} className="flex items-center justify-between gap-2 py-2"><span><Link href={s.href} className="font-medium underline">{s.title}</Link> <span className="text-ink-500">— {s.sub}</span></span><button onClick={() => setSaved(saved.filter((x) => x !== s.id))} className="text-xs text-red-600">Remove</button></li>
           ))}</ul>
         )}
       </section>
       <section className="card">
-        <h2 className="font-bold">My listings — manage the rooms &amp; items you posted</h2>
+        <h2 className="section-title">My listings — manage the rooms &amp; items you posted</h2>
         {myRooms.length === 0 && myRentals.length === 0 ? (
-          <p className="mt-2 text-sm text-ink-500">You have not posted anything yet. <Link href="/list-room" className="font-medium underline">List a room</Link> or <Link href="/list-item" className="font-medium underline">list a rental item</Link> — both are ₹0 brokerage in demo mode.</p>
+          <div className="empty-state mt-3">
+            <div className="empty-icon">🏠</div>
+            <p className="mt-2 font-semibold">You have not posted anything yet</p>
+            <p className="mt-1 text-sm text-ink-500">List a room or a rental item — both are ₹0 brokerage in demo mode.</p>
+            <div className="mt-4 flex justify-center gap-2">
+              <Link href="/list-room" className="btn-primary">List a room</Link>
+              <Link href="/list-item" className="btn-secondary">List a rental item</Link>
+            </div>
+          </div>
         ) : (
           <ul className="mt-2 divide-y text-sm">
             {myRooms.map((r) => (
@@ -83,8 +109,15 @@ export default function MySpacePage() {
         <p className="mt-2 text-xs text-ink-500">Listing lifecycle in demo: active → paused → filled. Demo seed listings are managed by the demo, not here.</p>
       </section>
       <section className="card">
-        <h2 className="font-bold">Interests timeline ({interests.length})</h2>
-        {interests.length === 0 ? <p className="mt-2 text-sm text-ink-500">No interests sent yet. Express interest on a flatmate, room or rental and it will appear here.</p> : (
+        <h2 className="section-title">Interests timeline ({interests.length})</h2>
+        {interests.length === 0 ? (
+          <div className="empty-state mt-3">
+            <div className="empty-icon">✉️</div>
+            <p className="mt-2 font-semibold">No interests sent yet</p>
+            <p className="mt-1 text-sm text-ink-500">Express interest on a flatmate, room or rental and it will appear here.</p>
+            <Link href="/rooms" className="mt-4 inline-block btn-primary">Browse rooms</Link>
+          </div>
+        ) : (
           <ul className="mt-2 divide-y text-sm">{interests.map((i) => (
             <li key={i.id} className="py-2"><span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs capitalize">{i.targetType}</span> <span className="text-ink-600">{new Date(i.createdAt).toLocaleString("en-IN")}</span><p className="mt-1">“{i.message}”</p></li>
           ))}</ul>
